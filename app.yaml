@@ -24,8 +24,11 @@ handlers:
   script: admin/admin.py
   login: admin
   
+#- url: /.*
+#  script: site/404.py
+  
 - url: /.*
-  script: site/404.py
+  script: site/resources.py
 
 skip_files:
 - ^(.*/)?app\.yaml

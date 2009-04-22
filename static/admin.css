@@ -49,3 +49,6 @@ textarea {
     background-repeat: no-repeat;
     background-position: 3px 50%;
 }
+.yui-skin-sam .yui-dt td.right {
+	text-align: right;
+}

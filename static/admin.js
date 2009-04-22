@@ -16,8 +16,8 @@
 			}
 		},
 		{ key: 'title', width: 212},
-		{ key: 'creation_date', formatter: "date", width: 100 },
-		{ key: 'modification_date', formatter: "date", width: 100 }
+		{ key: 'creation_date', className: "right", formatter: "date", width: 100 },
+		{ key: 'modification_date', className: "right", formatter: "date", width: 100 }
 	];
 	
 	var dataSource = new YAHOO.util.DataSource("/admin/resources");
