@@ -39,31 +39,8 @@
 		initialRequest: "/"
 	};
 	
-	var dataTable = new YAHOO.widget.ScrollingDataTable("grid", columns, dataSource, config);
-	dataTable.currentPath = config.initialRequest;
-	dataTable.set("selectionMode","single"); 
-	dataTable.subscribe("rowMouseoverEvent", dataTable.onEventHighlightRow); 
-	dataTable.subscribe("rowMouseoutEvent", dataTable.onEventUnhighlightRow);
-	dataTable.subscribe("rowClickEvent", function(args) {
-		var record = this.getRecord(args.target);
-		var path = record.getData("path");
-		var navigateTo = record.getData("parent_path") || path;
-		if (path == ".." || record.getData("class_name") == "Folder") {
-			dataSource.sendRequest(navigateTo, {
-				success: function () {
-            		this.onDataReturnReplaceRows.apply(this,arguments);
-            		if (navigateTo != "/") this.addRow({ path: "..", parent_path: this.currentPath }, 0);
-            		this.currentPath = navigateTo;
-				},
-				failure: function () {
-					alert("Error navigating to: " + navigateTo);
-				},
-				scope: dataTable
-			});
-		} else {
-			this.onEventSelectRow(args);
-		}
-		var tran = YAHOO.util.Connect.asyncRequest('GET', '/admin/resources' + navigateTo, {
+	var updateForm = function(path) {
+		var tran = YAHOO.util.Connect.asyncRequest('GET', '/admin/resources' + path, {
 			cache: false,
 			success: function (o) {
 				var resource = YAHOO.lang.JSON.parse(o.responseText);
@@ -81,10 +58,38 @@
 				YAHOO.util.Dom.setStyle(form, 'display', 'block');
 			},
 			failure: function () {
-				alert("Error getting: " + navigateTo);
+				alert("Error getting: " + path);
 			}
 		});
-	}); // rowclick
+	};
+	
+	var dataTable = new YAHOO.widget.ScrollingDataTable("grid", columns, dataSource, config);
+	dataTable.currentPath = config.initialRequest;
+	dataTable.set("selectionMode","single"); 
+	dataTable.subscribe("rowMouseoverEvent", dataTable.onEventHighlightRow); 
+	dataTable.subscribe("rowMouseoutEvent", dataTable.onEventUnhighlightRow);
+	dataTable.subscribe("rowClickEvent", function(args) {
+		var record = dataTable.getRecord(args.target);
+		var path = record.getData("path");
+		var navigateTo = record.getData("parent_path") || path;
+		if (path == ".." || record.getData("class_name") == "Folder") {
+			dataSource.sendRequest(navigateTo, {
+				success: function () {
+	        		this.onDataReturnReplaceRows.apply(this,arguments);
+	        		if (navigateTo != "/") this.addRow({ path: "..", parent_path: this.currentPath }, 0);
+	        		this.currentPath = navigateTo;
+				},
+				failure: function () {
+					alert("Error navigating to: " + navigateTo);
+				},
+				scope: dataTable
+			});
+		} else {
+			dataTable.onEventSelectRow(args);
+		}
+		updateForm(navigateTo);
+	});
+	updateForm(config.initialRequest);
 	
 	var flash = function(html) {
 		var message = YAHOO.util.Dom.get('message');
