@@ -39,7 +39,7 @@
 		initialRequest: "/"
 	};
 	
-	var updateForm = function(path) {
+	var bindForm = function(path) {
 		var tran = YAHOO.util.Connect.asyncRequest('GET', '/admin/resources' + path, {
 			cache: false,
 			success: function (o) {
@@ -87,9 +87,9 @@
 		} else {
 			dataTable.onEventSelectRow(args);
 		}
-		updateForm(navigateTo);
+		bindForm(navigateTo);
 	});
-	updateForm(config.initialRequest);
+	bindForm(config.initialRequest);
 	
 	var flash = function(html) {
 		var message = YAHOO.util.Dom.get('message');
