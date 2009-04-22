@@ -13,7 +13,6 @@
 					YAHOO.util.Dom.addClass(el.parentNode, className.toLowerCase());
 				}
 				el.innerHTML = '<div style="padding-left: 14px">' + path + '</div>';
-				
 			}
 		},
 		{ key: 'title', width: 212},
@@ -48,15 +47,13 @@
 	dataTable.subscribe("rowClickEvent", function(args) {
 		var record = this.getRecord(args.target);
 		var path = record.getData("path");
+		var navigateTo = record.getData("parent_path") || path;
 		if (path == ".." || record.getData("class_name") == "Folder") {
-			var navigateTo = record.getData("parent_path") || path;
 			dataSource.sendRequest(navigateTo, {
 				success: function () {
             		this.onDataReturnReplaceRows.apply(this,arguments);
             		if (navigateTo != "/") this.addRow({ path: "..", parent_path: this.currentPath }, 0);
             		this.currentPath = navigateTo;
-					var form = YAHOO.util.Dom.get('edit');
-					YAHOO.util.Dom.setStyle(form, 'display', 'none');
 				},
 				failure: function () {
 					alert("Error navigating to: " + navigateTo);
@@ -65,28 +62,28 @@
 			});
 		} else {
 			this.onEventSelectRow(args);
-			var tran = YAHOO.util.Connect.asyncRequest('GET', '/admin/resources' + path, {
-				cache: false,
-				success: function (o) {
-					var resource = YAHOO.lang.JSON.parse(o.responseText);
-					var form = YAHOO.util.Dom.get('edit');
-					var inputs = YAHOO.util.Selector.query('input, textarea', form);
-					YAHOO.util.Dom.batch(inputs, function (el) {
-						var wrap = YAHOO.util.Dom.getAncestorByTagName(el, 'div');
-						if (resource.hasOwnProperty(el.id)) {
-							YAHOO.util.Dom.setStyle(wrap, 'display', 'block');
-							el.value = resource[el.id];
-						} else {
-							YAHOO.util.Dom.setStyle(wrap, 'display', 'none');
-						}
-					});
-					YAHOO.util.Dom.setStyle(form, 'display', 'block');
-				},
-				failure: function () {
-					alert("Error getting: " + path);
-				}
-			});
 		}
+		var tran = YAHOO.util.Connect.asyncRequest('GET', '/admin/resources' + navigateTo, {
+			cache: false,
+			success: function (o) {
+				var resource = YAHOO.lang.JSON.parse(o.responseText);
+				var form = YAHOO.util.Dom.get('edit');
+				var inputs = YAHOO.util.Selector.query('input, textarea', form);
+				YAHOO.util.Dom.batch(inputs, function (el) {
+					var wrap = YAHOO.util.Dom.getAncestorByTagName(el, 'div');
+					if (resource.hasOwnProperty(el.id)) {
+						YAHOO.util.Dom.setStyle(wrap, 'display', 'block');
+						el.value = resource[el.id];
+					} else {
+						YAHOO.util.Dom.setStyle(wrap, 'display', 'none');
+					}
+				});
+				YAHOO.util.Dom.setStyle(form, 'display', 'block');
+			},
+			failure: function () {
+				alert("Error getting: " + navigateTo);
+			}
+		});
 	}); // rowclick
 	
 	var flash = function(html) {
