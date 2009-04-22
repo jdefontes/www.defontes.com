@@ -53,6 +53,7 @@
 						el.value = resource[el.id];
 					} else {
 						YAHOO.util.Dom.setStyle(wrap, 'display', 'none');
+						el.value = null;
 					}
 				});
 				YAHOO.util.Dom.setStyle(form, 'display', 'block');
@@ -73,23 +74,31 @@
 		var path = record.getData("path");
 		var navigateTo = record.getData("parent_path") || path;
 		if (path == ".." || record.getData("class_name") == "Folder") {
-			dataSource.sendRequest(navigateTo, {
-				success: function () {
-	        		this.onDataReturnReplaceRows.apply(this,arguments);
-	        		if (navigateTo != "/") this.addRow({ path: "..", parent_path: this.currentPath }, 0);
-	        		this.currentPath = navigateTo;
-				},
-				failure: function () {
-					alert("Error navigating to: " + navigateTo);
-				},
-				scope: dataTable
-			});
+			bindTable(navigateTo);
 		} else {
 			dataTable.onEventSelectRow(args);
 		}
 		bindForm(navigateTo);
 	});
 	bindForm(config.initialRequest);
+	
+	var bindTable = function(path) {
+		dataSource.sendRequest(path, {
+			success: function () {
+        		this.onDataReturnReplaceRows.apply(this,arguments);
+        		if (path != "/") {
+	        		var parentPath = path.replace(/\/$/, "");
+	        		parentPath = parentPath.match(/^.*\//) + "";
+        			this.addRow({ path: "..", parent_path: parentPath }, 0);
+        		}
+        		this.currentPath = path;
+			},
+			failure: function () {
+				alert("Error navigating to: " + path);
+			},
+			scope: dataTable
+		});
+	};
 	
 	var flash = function(html) {
 		var message = YAHOO.util.Dom.get('message');
@@ -108,6 +117,7 @@
 			success: function () {
 				saveButton.set('disabled', false);
 				flash("Saved successfully");
+				if (path.match("^" + dataTable.currentPath)) bindTable(dataTable.currentPath);
 			},
 			failure: function () {
 				saveButton.set('disabled', false);

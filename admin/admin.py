@@ -67,9 +67,19 @@ class ResourceHandler(webapp.RequestHandler):
 		if len(resources) == 1:
 			resource = resources[0]
 		else:
-			self.error(404)
-			self.response.out.write("path " + path + " not found")
-			return
+			if path != "/":
+				parent_path = re.match(".*/", path.rstrip("/")).group(0)
+				parents = model.Folder.all().filter("path =", parent_path).fetch(1)
+				if len(parents) == 1:
+					parent_resource = parents[0]
+				else:
+					self.error(404)
+					self.response.out.write("parent folder " + parent_path + " not found")
+					return
+				resource = model.__dict__[self.request.get("class_name")]()
+				resource.author = users.get_current_user()
+				resource.parent_resource = parent_resource
+
 		for p in resource.properties():
 			if self.request.get(p, None) != None:
 				setattr(resource, p, self.request.get(p))
