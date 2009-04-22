@@ -15,3 +15,9 @@ indexes:
   properties:
   - name: class
   - name: path
+
+# Used 2 times in query history.
+- kind: Resource
+  properties:
+  - name: parent_resource
+  - name: path

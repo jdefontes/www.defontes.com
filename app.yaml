@@ -13,19 +13,19 @@ handlers:
   static_files: static/robots.txt
   upload: static/robots.txt
 
-- url: /(.*\.(gif|png|jpg))
+- url: /(.*\.(css|gif|png|jpg|js))
   static_files: static/\1
-  upload: static/(.*\.(gif|png|jpg))
+  upload: static/(.*\.(css|gif|png|jpg|js))
 
 - url: /
-  script: script/home.py
+  script: site/home.py
 
 - url: /admin/.*
   script: admin/admin.py
   login: admin
   
 - url: /.*
-  script: script/404.py
+  script: site/404.py
 
 skip_files:
 - ^(.*/)?app\.yaml

@@ -1,0 +1,51 @@
+﻿form {
+	display: block;
+	border:solid 2px #b7ddf2;
+	background:#ebf4fb;
+	margin: 20px auto;
+	/*width:400px;*/
+	padding:14px;
+}
+label {
+	display:block;
+	font-weight:bold;
+	text-align:right;
+	width: 60px;
+	padding: 6px 0;
+	float:left;
+}
+input, textarea {
+	float:left;
+	font-size:14px;
+	padding:4px 2px;
+	border:solid 1px #aacfe4;
+	width: 610px;
+	margin:2px 0 20px 10px;
+}
+textarea {
+	font-family: "Lucida Console", monospace;
+}
+.buttons {
+	clear:both;
+	margin-left: 70px;
+}
+#message {
+	display: none;
+	color: #8ac;
+	margin-left: 10px;
+}
+.yui-skin-sam .yui-dt td.article {
+    background-image: url(/icon_article.gif);
+    background-repeat: no-repeat;
+    background-position: 3px 50%;
+}
+.yui-skin-sam .yui-dt td.folder {
+    background-image: url(/icon_folder.gif);
+    background-repeat: no-repeat;
+    background-position: 3px 50%;
+}
+.yui-skin-sam .yui-dt td.up {
+    background-image: url(/icon_folder_back.gif);
+    background-repeat: no-repeat;
+    background-position: 3px 50%;
+}
