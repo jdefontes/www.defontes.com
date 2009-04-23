@@ -1,4 +1,8 @@
-﻿.copyright {
+﻿#hd a {
+	color: #000;
+	text-decoration: none;
+}
+.copyright {
 	font-size: 85%;
 	line-height: 2em;
 	margin: 5em 0;
