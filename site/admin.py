@@ -22,7 +22,7 @@ class MainPage(webapp.RequestHandler):
 			resource.put()
 		
 		path = os.path.join(os.path.dirname(__file__), '..', 'templates', 'admin.html')
-		self.response.out.write(template.render(path, {}))
+		self.response.out.write(template.render(path, { "resource": { "title": "Admin" } }))
 
 class ResourceHandler(webapp.RequestHandler):
 	def get(self, path):

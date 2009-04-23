@@ -16,7 +16,7 @@ class ArticleHandler(webapp.RequestHandler):
       article = articles[0]
       
     template_values = {
-        "article": article
+        "resource": article
       }
 
     path = os.path.join(os.path.dirname(__file__), '..', 'templates', 'article.html')
