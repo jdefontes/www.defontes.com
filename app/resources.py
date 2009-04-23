@@ -10,7 +10,7 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 
 class ArticleHandler(webapp.RequestHandler):
   def get(self):  
-    articles = model.Article.all().filter("path = ", self.request.path).fetch(1)
+    articles = model.Resource.all().filter("path = ", self.request.path).fetch(1)
     
     if len(articles) == 1:
       article = articles[0]
@@ -19,7 +19,8 @@ class ArticleHandler(webapp.RequestHandler):
         "resource": article
       }
 
-    path = os.path.join(os.path.dirname(__file__), '..', 'templates', article.template )
+    template_name = article.template or article.class_name().lower() + ".html"
+    path = os.path.join(os.path.dirname(__file__), '..', 'templates', template_name )
     self.response.out.write(template.render(path, template_values))
 
 class ResourceHandlerApplication(object):

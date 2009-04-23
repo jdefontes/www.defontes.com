@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<h2>{{resource.title}}</h2>
+
+<div>{{resource.body}}</div>
+
+<ul>
+	{% for child in resource.child_resources %}
+	<li><a href="{{ child.path }}">{{ child.title }}</a></li>
+	{% endfor %}
+</ul>
+
+{% endblock %}
