@@ -1,7 +1,7 @@
 import cgi
 import os
 
-from site import model
+from app import model
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 from google.appengine.ext.webapp.util import run_wsgi_app

@@ -20,17 +20,17 @@ handlers:
   static_dir: style
 
 - url: /
-  script: site/home.py
+  script: app/home.py
 
 - url: /admin/.*
-  script: site/admin.py
+  script: app/admin.py
   login: admin
   
 #- url: /.*
-#  script: site/404.py
+#  script: app/404.py
   
 - url: /.*
-  script: site/resources.py
+  script: app/resources.py
 
 skip_files:
 - ^(.*/)?app\.yaml
