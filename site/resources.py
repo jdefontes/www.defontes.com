@@ -19,7 +19,7 @@ class ArticleHandler(webapp.RequestHandler):
         "resource": article
       }
 
-    path = os.path.join(os.path.dirname(__file__), '..', 'templates', 'article.html')
+    path = os.path.join(os.path.dirname(__file__), '..', 'templates', article.template )
     self.response.out.write(template.render(path, template_values))
 
 class ResourceHandlerApplication(object):

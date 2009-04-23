@@ -5,6 +5,7 @@ import simplejson as json
 
 from site import model
 from google.appengine.api import users
+from google.appengine.ext import db
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 from google.appengine.ext.webapp.util import run_wsgi_app
@@ -38,7 +39,7 @@ class ResourceHandler(webapp.RequestHandler):
 				"path": resource.path
 			}
 
-			for p in [ "title", "summary", "body" ]:
+			for p in [ "body", "browse", "template", "title", "summary" ]:
 				if hasattr(resource, p):
 					result[p] = getattr(resource, p)
 				
@@ -82,7 +83,12 @@ class ResourceHandler(webapp.RequestHandler):
 
 		for p in resource.properties():
 			if self.request.get(p, None) != None:
-				setattr(resource, p, self.request.get(p))
+				# this should be dynamic, like maybe:
+				# if isinstance(resource.__class__.__dict__[p], db.BooleanProperty):
+				if p == "browse":
+					setattr(resource, p, bool(self.request.get(p)))
+				else:
+					setattr(resource, p, self.request.get(p))
 
 		resource.put()
 		self.response.out.write("updated")
