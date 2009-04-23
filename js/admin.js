@@ -1,4 +1,6 @@
 ﻿YAHOO.util.Event.onDOMReady (function() {
+
+	YAHOO.util.Connect.initHeader("Accept", "application/json", true);
 	
 	var columns = [
 		{
@@ -20,9 +22,9 @@
 		{ key: 'modification_date', className: "right", formatter: "date", width: 100 }
 	];
 	
-	var dataSource = new YAHOO.util.DataSource("/admin/resources");
+	var dataSource = new YAHOO.util.XHRDataSource();
 	dataSource.responseType = YAHOO.util.DataSource.TYPE_JSON;
-	//dataSource.connXhrMode = "queueRequests";
+	dataSource.connXhrMode = "queueRequests";
 	dataSource.responseSchema = {
 		resultsList: "child_resources",
 		fields: [
@@ -39,30 +41,33 @@
 		initialRequest: "/"
 	};
 	
-	var bindForm = function(path) {
-		var tran = YAHOO.util.Connect.asyncRequest('GET', '/admin/resources' + path, {
+	var loadForm = function(path) {
+		var tran = YAHOO.util.Connect.asyncRequest('GET', path, {
 			cache: false,
 			success: function (o) {
-				var resource = YAHOO.lang.JSON.parse(o.responseText);
-				var form = YAHOO.util.Dom.get('edit');
-				var inputs = YAHOO.util.Selector.query('input, textarea', form);
-				YAHOO.util.Dom.batch(inputs, function (el) {
-					var wrap = YAHOO.util.Dom.getAncestorByTagName(el, 'div');
-					if (resource.hasOwnProperty(el.id)) {
-						YAHOO.util.Dom.setStyle(wrap, 'display', 'block');
-						el.value = resource[el.id];
-					} else {
-						YAHOO.util.Dom.setStyle(wrap, 'display', 'none');
-						el.value = null;
-					}
-				});
-				YAHOO.util.Dom.setStyle(form, 'display', 'block');
+				bindForm(YAHOO.lang.JSON.parse(o.responseText));
 			},
 			failure: function () {
 				alert("Error getting: " + path);
 			}
 		});
 	};
+	
+	var bindForm = function(resource) {
+		var form = YAHOO.util.Dom.get('edit');
+		var inputs = YAHOO.util.Selector.query('input, textarea', form);
+		YAHOO.util.Dom.batch(inputs, function (el) {
+			var wrap = YAHOO.util.Dom.getAncestorByTagName(el, 'div');
+			if (resource.hasOwnProperty(el.id)) {
+				YAHOO.util.Dom.setStyle(wrap, 'display', 'block');
+				el.value = resource[el.id];
+			} else {
+				YAHOO.util.Dom.setStyle(wrap, 'display', 'none');
+				el.value = null;
+			}
+		});
+		YAHOO.util.Dom.setStyle(form, 'display', 'block');
+	}
 	
 	var dataTable = new YAHOO.widget.ScrollingDataTable("grid", columns, dataSource, config);
 	dataTable.currentPath = config.initialRequest;
@@ -74,15 +79,15 @@
 		var path = record.getData("path");
 		var navigateTo = record.getData("parent_path") || path;
 		if (path == ".." || record.getData("class_name") == "Folder") {
-			bindTable(navigateTo);
+			loadTable(navigateTo);
 		} else {
 			dataTable.onEventSelectRow(args);
 		}
-		bindForm(navigateTo);
+		loadForm(navigateTo);
 	});
-	bindForm(config.initialRequest);
+	loadForm(config.initialRequest);
 	
-	var bindTable = function(path) {
+	var loadTable = function(path) {
 		dataSource.sendRequest(path, {
 			success: function () {
         		this.onDataReturnReplaceRows.apply(this,arguments);
@@ -113,11 +118,12 @@
 		var path = YAHOO.util.Dom.get('path').value;
 		this.set('disabled', true);
 		YAHOO.util.Connect.setForm(form);
-		var tran = YAHOO.util.Connect.asyncRequest('POST', '/admin/resources' + path, {
-			success: function () {
+		var tran = YAHOO.util.Connect.asyncRequest('POST', path, {
+			success: function (o) {
 				saveButton.set('disabled', false);
+				bindForm(YAHOO.lang.JSON.parse(o.responseText));
 				flash("Saved successfully");
-				if (path.match("^" + dataTable.currentPath)) bindTable(dataTable.currentPath);
+				if (path.match("^" + dataTable.currentPath)) loadTable(dataTable.currentPath);
 			},
 			failure: function () {
 				saveButton.set('disabled', false);
