@@ -27,6 +27,9 @@ class MainPage(webapp.RequestHandler):
 
 class ResourceHandler(webapp.RequestHandler):
 	def get(self, path):
+		# See http://www.xml.com/pub/a/2005/06/08/restful.html for a discussion
+		# of content negotiation issues.
+		logging.info("Accept: " + self.request.headers['Accept'])
 		dateformat = "%b %d, %Y %H:%M"
 		resources = model.Resource.all().filter("path = ", path).fetch(1)
 		if len(resources) == 1:
@@ -62,7 +65,7 @@ class ResourceHandler(webapp.RequestHandler):
 
 	# Using POST here even though PUT would be more REST-ful because
 	# POST parses the entity body as a query string which makes life
-	# easier both here and on the client.
+	# easier both here and on the client
 	def post(self, path):
 		resources = model.Resource.all().filter("path =", path).fetch(1)
 		if len(resources) == 1:

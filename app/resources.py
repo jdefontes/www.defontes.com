@@ -1,4 +1,5 @@
 import cgi
+import logging
 import os
 
 from app import model
@@ -8,8 +9,7 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 
 
 class ArticleHandler(webapp.RequestHandler):
-  def get(self):
-  
+  def get(self):  
     articles = model.Article.all().filter("path = ", self.request.path).fetch(1)
     
     if len(articles) == 1:
