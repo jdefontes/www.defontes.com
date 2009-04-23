@@ -35,17 +35,17 @@ textarea {
 	margin-left: 10px;
 }
 .yui-skin-sam .yui-dt td.article {
-    background-image: url(/icon_article.gif);
+    background-image: url(icon_article.gif);
     background-repeat: no-repeat;
     background-position: 3px 50%;
 }
 .yui-skin-sam .yui-dt td.folder {
-    background-image: url(/icon_folder.gif);
+    background-image: url(icon_folder.gif);
     background-repeat: no-repeat;
     background-position: 3px 50%;
 }
 .yui-skin-sam .yui-dt td.up {
-    background-image: url(/icon_folder_back.gif);
+    background-image: url(icon_folder_back.gif);
     background-repeat: no-repeat;
     background-position: 3px 50%;
 }

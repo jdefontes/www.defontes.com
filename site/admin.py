@@ -3,7 +3,7 @@ import os
 import re
 import simplejson as json
 
-from common import model
+from site import model
 from google.appengine.api import users
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
