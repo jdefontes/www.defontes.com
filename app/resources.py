@@ -33,7 +33,7 @@ class ResourceHandler(webapp.RequestHandler):
 		path = os.path.join(os.path.dirname(__file__), '..', 'templates', template_name )
 		self.response.out.write(template.render(path, template_values))
 		
-	def json_representation(self, resource, include_children=True):
+	def json_representation(self, resource):
 		dateformat = "%b %d, %Y %H:%M"
 		result = {
 			"class_name": resource.class_name(),
@@ -47,7 +47,7 @@ class ResourceHandler(webapp.RequestHandler):
 			if hasattr(resource, p):
 				result[p] = getattr(resource, p)
 			
-		if resource.child_resources and include_children:
+		if resource.child_resources:
 			result['child_resources'] = [ {
 				"class_name": c.class_name(),
 				"author": str(c.author),
@@ -98,7 +98,7 @@ class ResourceHandler(webapp.RequestHandler):
 					setattr(resource, p, self.request.get(p))
 
 		resource.put()
-		self.json_representation(resource, False)
+		self.json_representation(resource)
 
 def not_found(response):
 	path = os.path.join(os.path.dirname(__file__), '..', 'templates', '404.html')
