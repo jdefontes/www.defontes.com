@@ -1,4 +1,15 @@
-﻿form {
+﻿#folder-wrap {
+	background-color: #f9f9f9;
+	border-top: 1px solid #7f7f7f;
+	border-left: 1px solid #7f7f7f;
+	border-right: 1px solid #7f7f7f;
+}
+#folder {
+	background: url(icon_folder.gif) no-repeat 2px 0;
+	padding-left: 24px;
+	margin: 14px 10px;
+}
+form {
 	display: block;
 	border:solid 2px #b7ddf2;
 	background:#ebf4fb;
@@ -51,4 +62,7 @@ textarea {
 }
 .yui-skin-sam .yui-dt td.right {
 	text-align: right;
+}
+.yui-skin-sam .yui-dt-scrollable .yui-dt-bd { 
+    overflow-y: scroll; 
 }

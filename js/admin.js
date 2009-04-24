@@ -1,7 +1,36 @@
 ﻿YAHOO.util.Event.onDOMReady (function() {
 
 	YAHOO.util.Connect.initHeader("Accept", "application/json", true);
-	
+		
+	YAHOO.util.Connect.asyncRequest('GET', '/__meta__/', {
+		success: function (o) {
+			var resources = YAHOO.lang.JSON.parse(o.responseText);
+			var items = [];
+			for (i = 0; i < resources.length; ++i) {
+				var resource = resources[i];
+				items.push({
+					text: resource['class_name'],
+					onclick: {
+						fn: function (eventType, event, obj) {
+							obj.path = dataTable.currentPath;
+							bindForm(obj);
+						},
+						obj: resource
+					}
+				});
+			}
+			var newButton = new YAHOO.widget.Button({
+				container: "newButton",
+				type: "menu",
+				label: "New Resource",
+				menu: items
+			});
+		},
+		failure: function () {
+			alert("Error loading resource types");
+		}
+	});
+
 	var columns = [
 		{
 			key: 'path',
@@ -17,7 +46,7 @@
 				el.innerHTML = '<div style="padding-left: 14px">' + path + '</div>';
 			}
 		},
-		{ key: 'title', width: 212},
+		{ key: 'title', width: 196},
 		{ key: 'creation_date', className: "right", formatter: "date", width: 100 },
 		{ key: 'modification_date', className: "right", formatter: "date", width: 100 }
 	];
@@ -38,7 +67,8 @@
 	
 	var config = {
 		height: '200px',
-		initialRequest: "/"
+		width: '747px',
+		initialLoad: false
 	};
 	
 	var loadForm = function(path) {
@@ -70,7 +100,6 @@
 	}
 	
 	var dataTable = new YAHOO.widget.ScrollingDataTable("grid", columns, dataSource, config);
-	dataTable.currentPath = config.initialRequest;
 	dataTable.set("selectionMode","single"); 
 	dataTable.subscribe("rowMouseoverEvent", dataTable.onEventHighlightRow); 
 	dataTable.subscribe("rowMouseoutEvent", dataTable.onEventUnhighlightRow);
@@ -85,7 +114,6 @@
 		}
 		loadForm(navigateTo);
 	});
-	loadForm(config.initialRequest);
 	
 	var loadTable = function(path) {
 		dataSource.sendRequest(path, {
@@ -97,6 +125,7 @@
         			this.addRow({ path: "..", parent_path: parentPath }, 0);
         		}
         		this.currentPath = path;
+        		YAHOO.util.Dom.get('folder').innerHTML = path;
 			},
 			failure: function () {
 				alert("Error navigating to: " + path);
@@ -105,6 +134,9 @@
 		});
 	};
 	
+	loadTable('/');
+	loadForm('/');
+
 	var flash = function(html) {
 		var message = YAHOO.util.Dom.get('message');
 		message.innerHTML = html;
