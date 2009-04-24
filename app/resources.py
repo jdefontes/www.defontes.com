@@ -10,6 +10,17 @@ from google.appengine.ext.webapp import template
 from google.appengine.ext.webapp.util import run_wsgi_app
 
 
+class MetadataHandler(webapp.RequestHandler):
+	def get(self):
+		resources = [ model.Article(), model.Folder() ]
+		hide = [ "_class", "parent_resource" ]
+		meta = [
+			dict([ (p, None) for p in r.properties() if p not in hide ] + [ ( "class_name", r.class_name() )])
+		for r in resources ]
+		self.response.headers['Content-Type'] = "application/json"
+		self.response.out.write(json.dumps(meta))
+
+
 class ResourceHandler(webapp.RequestHandler):
 	def get(self, path):
 		resource = model.Resource.all().filter("path = ", self.request.path).get()
@@ -19,7 +30,7 @@ class ResourceHandler(webapp.RequestHandler):
 		
 		# unbelievably robust content negotiation
 		accept = self.request.headers['Accept'] or ""
-		logging.info("Accept: " + accept)
+		#logging.info("Accept: " + accept)
 		if accept.find("json") > -1:
 			self.json_representation(resource)
 		else:
@@ -107,6 +118,7 @@ def not_found(response):
 
 			
 application = webapp.WSGIApplication( [
+	('/__meta__/', MetadataHandler),
 	('(/.*)', ResourceHandler)
 ], debug=True)
 
