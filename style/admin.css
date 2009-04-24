@@ -66,3 +66,14 @@ textarea {
 .yui-skin-sam .yui-dt-scrollable .yui-dt-bd { 
     overflow-y: scroll; 
 }
+.yui-skin-sam #newButton li.yuimenuitem .yuimenuitemlabel {
+    background-repeat: no-repeat;
+    background-position: 4px 3px;
+    padding: 4px 20px 4px 24px;
+}
+.yui-skin-sam #newButton li.article .yuimenuitemlabel{
+    background-image: url(icon_article.gif);
+}
+.yui-skin-sam #newButton li.folder .yuimenuitemlabel{
+    background-image: url(icon_folder.gif);
+}

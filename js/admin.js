@@ -9,6 +9,7 @@
 			for (i = 0; i < resources.length; ++i) {
 				var resource = resources[i];
 				items.push({
+					classname: resource['class_name'].toLowerCase(),
 					text: resource['class_name'],
 					onclick: {
 						fn: function (eventType, event, obj) {
