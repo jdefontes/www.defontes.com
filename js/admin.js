@@ -123,6 +123,8 @@
 				saveButton.set('disabled', false);
 				bindForm(YAHOO.lang.JSON.parse(o.responseText));
 				flash("Saved successfully");
+				// TODO - when we update the current folder we could avoid the extra
+				// call to update the table, since we already have the data
 				if (path.match("^" + dataTable.currentPath)) loadTable(dataTable.currentPath);
 			},
 			failure: function () {
