@@ -33,7 +33,7 @@
 	
 	<div id="grid"></div>
 	
-	<form id="edit" style="display: none">
+	<form id="edit" style="display: none" enctype="multipart/form-data">
 	
 		<div><label>Type</label>
 		<input type="text" id="class_name" name="class_name" /></div>
@@ -49,6 +49,9 @@
 		
 		<div><label>Title</label>
 		<input type="text" id="title" name="title" /></div>
+		
+		<div><label>Image</label>
+		<input type="file" id="image_blob" name="image_blob" /></div>
 		
 		<div><label>Body</label>
 		<textarea id="body" name="body" rows="15"></textarea></div>

@@ -5,6 +5,7 @@ import simplejson as json
 
 from app import model
 from google.appengine.api import users
+from google.appengine.ext import db
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 from google.appengine.ext.webapp.util import run_wsgi_app
@@ -12,7 +13,7 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 
 class MetadataHandler(webapp.RequestHandler):
 	def get(self):
-		resources = [ model.Article(), model.Folder() ]
+		resources = [ model.Article(), model.Folder(), model.Image() ]
 		hide = [ "_class", "parent_resource" ]
 		meta = [
 			dict([ (p, None) for p in r.properties() if p not in hide ] + [ ( "class_name", r.class_name() )])
@@ -33,6 +34,8 @@ class ResourceHandler(webapp.RequestHandler):
 		#logging.info("Accept: " + accept)
 		if accept.find("json") > -1:
 			self.json_representation(resource)
+		elif resource.class_name() == "Image":
+			self.image_representation(resource)
 		else:
 			self.html_representation(resource)
 
@@ -43,7 +46,11 @@ class ResourceHandler(webapp.RequestHandler):
 		template_name = resource.template or resource.class_name().lower() + ".html"
 		path = os.path.join(os.path.dirname(__file__), '..', 'templates', template_name )
 		self.response.out.write(template.render(path, template_values))
-		
+	
+	def image_representation(self, resource):
+		self.response.headers['Content-Type'] = "image/jpeg"
+		self.response.out.write(resource.image_blob)
+
 	def json_representation(self, resource):
 		dateformat = "%b %d, %Y %H:%M"
 		result = {
@@ -57,7 +64,10 @@ class ResourceHandler(webapp.RequestHandler):
 		for p in [ "body", "browse", "template", "title", "summary" ]:
 			if hasattr(resource, p):
 				result[p] = getattr(resource, p)
-			
+		
+		if resource.class_name() == "Image":
+			result["image_blob"] = None
+		
 		if resource.child_resources:
 			result['child_resources'] = [ {
 				"class_name": c.class_name(),
@@ -68,7 +78,9 @@ class ResourceHandler(webapp.RequestHandler):
 				"title": c.title
 			} for c in resource.child_resources.order("path") ]
 		
-		self.response.headers['Content-Type'] = "application/json"
+		# browsers don't like the proper mime type: http://simonwillison.net/2009/Feb/6/json/
+		# and also a workaround for this: http://tech.groups.yahoo.com/group/ydn-javascript/message/29416
+		self.response.headers['Content-Type'] = "text/html"
 		self.response.out.write(json.dumps(result))
 		
 	# Using POST here even though PUT would be more REST-ful because
@@ -100,13 +112,17 @@ class ResourceHandler(webapp.RequestHandler):
 				return
 
 		for p in resource.properties():
+			value = self.request.get(p)
 			if self.request.get(p, None) != None:
 				# this should be dynamic, like maybe:
 				# if isinstance(resource.__class__.__dict__[p], db.BooleanProperty):
 				if p == "browse":
-					setattr(resource, p, bool(self.request.get(p)))
+					setattr(resource, p, bool(value))
+				elif p == "image_blob":
+					if value != "":
+						setattr(resource, p, db.Blob(value))
 				else:
-					setattr(resource, p, self.request.get(p))
+					setattr(resource, p, value)
 
 		resource.put()
 		self.json_representation(resource)
