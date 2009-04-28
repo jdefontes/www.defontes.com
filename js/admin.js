@@ -154,22 +154,20 @@
 	};
 	
 	var saveButton = new YAHOO.widget.Button("save");
-	var saveHandler = function (o) {
-		saveButton.set('disabled', false);
-		bindForm(YAHOO.lang.JSON.parse(o.responseText));
-		flash("Saved successfully");
-		// TODO - when we update the current folder we could avoid the extra
-		// call to update the table, since we already have the data
-		if (path.match("^" + dataTable.currentPath)) loadTable(dataTable.currentPath);
-	};
 	saveButton.on("click", function () {
 		var form = YAHOO.util.Dom.get('edit');
 		var path = YAHOO.util.Dom.get('path').value;
 		this.set('disabled', true);
 		YAHOO.util.Connect.setForm(form, true);
 		var tran = YAHOO.util.Connect.asyncRequest('POST', path, {
-			success: saveHandler,
-			upload: saveHandler,
+			upload: function (o) {
+				saveButton.set('disabled', false);
+				bindForm(YAHOO.lang.JSON.parse(o.responseText));
+				flash("Saved successfully");
+				// TODO - when we update the current folder we could avoid the extra
+				// call to update the table, since we already have the data
+				if (path.match("^" + dataTable.currentPath)) loadTable(dataTable.currentPath);
+			},
 			failure: function () {
 				saveButton.set('disabled', false);
 				flash("Error - save failed");
