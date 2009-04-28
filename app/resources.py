@@ -4,6 +4,7 @@ import re
 import simplejson as json
 
 from app import model
+from google.appengine.api import images
 from google.appengine.api import users
 from google.appengine.ext import db
 from google.appengine.ext import webapp
@@ -48,8 +49,15 @@ class ResourceHandler(webapp.RequestHandler):
 		self.response.out.write(template.render(path, template_values))
 	
 	def image_representation(self, resource):
-		self.response.headers['Content-Type'] = "image/jpeg"
-		self.response.out.write(resource.image_blob)
+		if self.request.get("w", None) != None and self.request.get("h", None) != None:
+			image = images.Image(resource.image_blob)
+			image.resize(width=int(self.request.get("w")), height=int(self.request.get("h")))
+			self.response.headers['Content-Type'] = "image/jpeg"
+			self.response.out.write(image.execute_transforms(output_encoding=images.JPEG))
+		else:
+			# TODO - deal with mime types
+			self.response.headers['Content-Type'] = "image/jpeg"
+			self.response.out.write(resource.image_blob)
 
 	def json_representation(self, resource):
 		dateformat = "%b %d, %Y %H:%M"
