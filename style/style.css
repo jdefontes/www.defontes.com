@@ -1,6 +1,21 @@
-﻿#hd a {
-	color: #000;
+﻿#nav {
+	float: right;
+	padding: 0;
+	margin: 1.7em 0 0 0;
+}
+#nav li {
+	padding: 0;
+	margin: 0;
+	float: left;
+	list-style: none;
+}
+#nav li a {
+	display: block;
+	margin: 0 0.5em;
 	text-decoration: none;
+}
+#nav li a:hover {
+	text-decoration: underline;
 }
 .copyright {
 	font-size: 85%;
