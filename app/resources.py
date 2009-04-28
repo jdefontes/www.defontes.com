@@ -1,4 +1,5 @@
 import logging
+import mimetypes
 import os
 import re
 import simplejson as json
@@ -52,11 +53,10 @@ class ResourceHandler(webapp.RequestHandler):
 		if self.request.get("w", None) != None and self.request.get("h", None) != None:
 			image = images.Image(resource.image_blob)
 			image.resize(width=int(self.request.get("w")), height=int(self.request.get("h")))
-			self.response.headers['Content-Type'] = "image/jpeg"
-			self.response.out.write(image.execute_transforms(output_encoding=images.JPEG))
+			self.response.headers['Content-Type'] = "image/png"
+			self.response.out.write(image.execute_transforms(output_encoding=images.PNG))
 		else:
-			# TODO - deal with mime types
-			self.response.headers['Content-Type'] = "image/jpeg"
+			self.response.headers['Content-Type'] = resource.mime_type
 			self.response.out.write(resource.image_blob)
 
 	def json_representation(self, resource):
@@ -129,6 +129,7 @@ class ResourceHandler(webapp.RequestHandler):
 				elif p == "image_blob":
 					if value != "":
 						setattr(resource, p, db.Blob(value))
+						resource.mime_type, encoding = mimetypes.guess_type(self.request.path)
 				else:
 					setattr(resource, p, value)
 

@@ -19,3 +19,4 @@ class Article(Resource):
 
 class Image(Resource):
 	image_blob = db.BlobProperty()
+	mime_type = db.StringProperty()
