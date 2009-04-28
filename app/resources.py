@@ -15,7 +15,7 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 
 class MetadataHandler(webapp.RequestHandler):
 	def get(self):
-		resources = [ model.Article(), model.Folder(), model.Image() ]
+		resources = [ model.Artwork(), model.Article(), model.Folder(), model.Image() ]
 		hide = [ "_class", "parent_resource" ]
 		meta = [
 			dict([ (p, None) for p in r.properties() if p not in hide ] + [ ( "class_name", r.class_name() )])
