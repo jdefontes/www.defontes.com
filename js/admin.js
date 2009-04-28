@@ -172,6 +172,21 @@
 		});
 	});
 	
+	var flushButton = new YAHOO.widget.Button("flush");
+	flushButton.on("click", function () {
+		flushButton.set('disabled', true);
+		var tran = YAHOO.util.Connect.asyncRequest('POST', '/admin/', {
+			success: function (o) {
+				flushButton.set('disabled', false);
+				flash("Cache flushed");
+			},
+			failure: function () {
+				flushButton.set('disabled', false);
+				flash("Error flushing cache");
+			}
+		});
+	});
+	
 	YAHOO.util.Event.addListener('image_blob', 'change', function () {
 		var file = this.value;
 		if (file != null) {

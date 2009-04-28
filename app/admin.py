@@ -1,6 +1,7 @@
 import os
 
 from app import model
+from google.appengine.api import memcache
 from google.appengine.api import users
 from google.appengine.ext import db
 from google.appengine.ext import webapp
@@ -20,6 +21,11 @@ class MainPage(webapp.RequestHandler):
 		
 		path = os.path.join(os.path.dirname(__file__), '..', 'templates', 'admin.html')
 		self.response.out.write(template.render(path, { "resource": { "title": "Admin" } }))
+	
+	# HACK - sticking this here for now because I can
+	def post(self):
+		memcache.flush_all()
+		self.response.out.write("flushed")
 
 application = webapp.WSGIApplication( [
 	('/admin/', MainPage)
