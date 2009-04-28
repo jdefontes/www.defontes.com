@@ -172,6 +172,15 @@
 		});
 	});
 	
+	YAHOO.util.Event.addListener('image_blob', 'change', function () {
+		var file = this.value;
+		if (file != null) {
+			file = file.substring(file.lastIndexOf('\\')+1); // IE returns full path
+			YAHOO.util.Dom.get('path').value = dataTable.currentPath + file;
+			YAHOO.util.Dom.get('title').value = file;
+		}
+	});
+	
 	// load initial state
 	loadTable('/');
 	loadForm('/');
