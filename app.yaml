@@ -19,9 +19,6 @@ handlers:
 - url: /style
   static_dir: style
 
-#- url: /
-#  script: app/home.py
-
 - url: /admin/.*
   script: app/admin.py
   login: admin
