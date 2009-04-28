@@ -130,6 +130,9 @@ class ResourceHandler(webapp.RequestHandler):
 					if value != "":
 						setattr(resource, p, db.Blob(value))
 						resource.mime_type, encoding = mimetypes.guess_type(self.request.path)
+						image = images.Image(resource.image_blob)
+						resource.width = image.width
+						resource.height = image.height
 				else:
 					setattr(resource, p, value)
 
