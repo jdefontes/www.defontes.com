@@ -33,7 +33,6 @@ class ResourceHandler(webapp.RequestHandler):
 		
 		# unbelievably robust content negotiation
 		accept = self.request.headers['Accept'] or ""
-		#logging.info("Accept: " + accept)
 		if accept.find("json") > -1:
 			self.json_representation(resource)
 		elif resource.class_name() == "Image":
@@ -69,7 +68,7 @@ class ResourceHandler(webapp.RequestHandler):
 			"path": resource.path
 		}
 	
-		for p in [ "body", "browse", "template", "title", "summary" ]:
+		for p in [ "body", "template", "title", "summary" ]:
 			if hasattr(resource, p):
 				result[p] = getattr(resource, p)
 		
@@ -122,11 +121,7 @@ class ResourceHandler(webapp.RequestHandler):
 		for p in resource.properties():
 			value = self.request.get(p)
 			if self.request.get(p, None) != None:
-				# this should be dynamic, like maybe:
-				# if isinstance(resource.__class__.__dict__[p], db.BooleanProperty):
-				if p == "browse":
-					setattr(resource, p, bool(value))
-				elif p == "image_blob":
+				if p == "image_blob":
 					if value != "":
 						setattr(resource, p, db.Blob(value))
 						resource.mime_type, encoding = mimetypes.guess_type(self.request.path)
@@ -138,6 +133,10 @@ class ResourceHandler(webapp.RequestHandler):
 
 		resource.put()
 		self.json_representation(resource)
+
+def forbidden(response):
+	response.set_status(403)
+	response.out.write("Forbidden")
 
 def not_found(response):
 	path = os.path.join(os.path.dirname(__file__), '..', 'templates', '404.html')

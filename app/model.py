@@ -11,7 +11,6 @@ class Resource(polymodel.PolyModel):
 
 class Folder(Resource):
 	body = db.TextProperty()
-	browse = db.BooleanProperty()
 	template = db.StringProperty()
 
 class Article(Resource):
