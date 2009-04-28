@@ -6,6 +6,7 @@ import simplejson as json
 
 from app import model
 from google.appengine.api import images
+from google.appengine.api import memcache
 from google.appengine.api import users
 from google.appengine.ext import db
 from google.appengine.ext import webapp
@@ -26,37 +27,51 @@ class MetadataHandler(webapp.RequestHandler):
 
 class ResourceHandler(webapp.RequestHandler):
 	def get(self, path):
-		resource = model.Resource.all().filter("path = ", self.request.path).get()
-		
-		if resource == None:
-			return not_found(self.response)
-		
 		# unbelievably robust content negotiation
 		accept = self.request.headers['Accept'] or ""
-		if accept.find("json") > -1:
-			self.json_representation(resource)
-		elif resource.class_name() == "Image":
-			self.image_representation(resource)
+		send_json = accept.find("json") > -1
+		
+		key = path
+		representation = None
+		if self.request.query_string:
+			key = key + "?" + self.request.query_string
+		
+		if not send_json:
+			representation = memcache.get(key)
+			
+		if representation:
+			logging.info("cache hit: " +key)
 		else:
-			self.html_representation(resource)
+			logging.info("cache miss: " +key)
+			resource = model.Resource.all().filter("path = ", self.request.path).get()
+			
+			if resource == None:
+				return not_found(self.response)
+			
+			if send_json:
+				representation = self.json_representation(resource)
+			else:
+				if resource.class_name() == "Image":
+					representation = self.image_representation(resource)
+				else:
+					representation = self.html_representation(resource)
+				memcache.set(key, representation)
+		
+		self.write(representation)
 
 	def html_representation(self, resource):
-		template_values = {
-			"resource": resource
-		}
+		template_values = { "resource": resource }
 		template_name = resource.template or resource.class_name().lower() + ".html"
 		path = os.path.join(os.path.dirname(__file__), '..', 'templates', template_name )
-		self.response.out.write(template.render(path, template_values))
+		return { "content_type": "text/html", "body": template.render(path, template_values) }
 	
 	def image_representation(self, resource):
 		if self.request.get("w", None) != None and self.request.get("h", None) != None:
 			image = images.Image(resource.image_blob)
 			image.resize(width=int(self.request.get("w")), height=int(self.request.get("h")))
-			self.response.headers['Content-Type'] = "image/png"
-			self.response.out.write(image.execute_transforms(output_encoding=images.PNG))
+			return { "content_type": "image/png", "body": image.execute_transforms(output_encoding=images.PNG) }
 		else:
-			self.response.headers['Content-Type'] = resource.mime_type
-			self.response.out.write(resource.image_blob)
+			return { "content_type": resource.mime_type, "body": resource.image_blob }
 
 	def json_representation(self, resource):
 		dateformat = "%b %d, %Y %H:%M"
@@ -87,8 +102,12 @@ class ResourceHandler(webapp.RequestHandler):
 		
 		# browsers don't like the proper mime type: http://simonwillison.net/2009/Feb/6/json/
 		# and also a workaround for this: http://tech.groups.yahoo.com/group/ydn-javascript/message/29416
-		self.response.headers['Content-Type'] = "text/html"
-		self.response.out.write(json.dumps(result))
+		return { "content_type": "text/html", "body": json.dumps(result) }
+	
+	def write(self, representation):
+		self.response.headers['Content-Type'] = representation["content_type"]
+		self.response.out.write(representation["body"])
+
 		
 	# Using POST here even though PUT would be more REST-ful because
 	# POST parses the entity body as a query string which makes life
@@ -132,7 +151,7 @@ class ResourceHandler(webapp.RequestHandler):
 					setattr(resource, p, value)
 
 		resource.put()
-		self.json_representation(resource)
+		self.write(self.json_representation(resource))
 
 def not_found(response):
 	path = os.path.join(os.path.dirname(__file__), '..', 'templates', '404.html')
