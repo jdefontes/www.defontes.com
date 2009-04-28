@@ -134,10 +134,6 @@ class ResourceHandler(webapp.RequestHandler):
 		resource.put()
 		self.json_representation(resource)
 
-def forbidden(response):
-	response.set_status(403)
-	response.out.write("Forbidden")
-
 def not_found(response):
 	path = os.path.join(os.path.dirname(__file__), '..', 'templates', '404.html')
 	response.set_status(404)
