@@ -97,6 +97,14 @@
 				el.value = null;
 			}
 		});
+		var thumb = YAHOO.util.Dom.get('thumb');
+		if (resource.class_name == "Image" && resource.path != dataTable.currentPath) {
+			thumb.src = resource.path + "?w=128&h=128";
+			YAHOO.util.Dom.setStyle(thumb, 'display', 'block');
+		} else {
+			thumb.src = null;
+			YAHOO.util.Dom.setStyle(thumb, 'display', 'none');
+		}
 		YAHOO.util.Dom.setStyle(form, 'display', 'block');
 	}
 	

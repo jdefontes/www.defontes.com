@@ -33,6 +33,11 @@ input, textarea {
 	width: 610px;
 	margin:2px 0 20px 10px;
 }
+form img {
+	margin: 0 0 20px 70px;
+	border:solid 1px #aacfe4;
+	clear:both;
+}
 textarea {
 	font-family: "Lucida Console", monospace;
 }
