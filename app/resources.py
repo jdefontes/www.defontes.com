@@ -83,7 +83,7 @@ class ResourceHandler(webapp.RequestHandler):
 			"path": resource.path
 		}
 	
-		for p in [ "body", "template", "title", "summary" ]:
+		for p in [ "body", "image_path", "template", "title", "summary" ]:
 			if hasattr(resource, p):
 				result[p] = getattr(resource, p)
 		

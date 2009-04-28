@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<h2>{{resource.title}}</h2>
+
+<div>{{resource.body}}</div>
+
+
+	{% for child in resource.child_resources %}
+	<a class="thumb" href="{{ child.path }}">
+		<img src="{{ child.image_path }}?w=200&amp;h=200" alt="{{ child.title }}" />
+		<span><i>{{ child.title }}</i>. Oil on canvas. 2005.</span>
+	</a>
+	{% endfor %}
+
+
+{% endblock %}
