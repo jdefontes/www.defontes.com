@@ -142,9 +142,6 @@
 			scope: dataTable
 		});
 	};
-	
-	loadTable('/');
-	loadForm('/');
 
 	var flash = function(html) {
 		var message = YAHOO.util.Dom.get('message');
@@ -174,5 +171,9 @@
 			}
 		});
 	});
+	
+	// load initial state
+	loadTable('/');
+	loadForm('/');
 	
 }); // ready
