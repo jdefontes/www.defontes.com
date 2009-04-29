@@ -8,13 +8,13 @@
 	background: url(icon_folder.gif) no-repeat 2px 0;
 	padding-left: 24px;
 	margin: 14px 10px;
+	float: left;
 }
 form {
 	display: block;
 	border:solid 2px #b7ddf2;
 	background:#ebf4fb;
 	margin: 20px auto;
-	/*width:400px;*/
 	padding:14px;
 }
 label {
