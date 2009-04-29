@@ -9,8 +9,8 @@
 
 	{% for child in resource.child_resources %}
 	<a class="thumb" href="{{ child.path }}">
-		<img src="{{ child.image_path }}?w=200&amp;h=200" alt="{{ child.title }}" />
-		<span><i>{{ child.title }}</i>. Oil on canvas. 2005.</span>
+		<div class="image"><div><img src="{{ child.image_path }}?w=200&amp;h=200" alt="{{ child.title }}" /></div></div>
+		<div class="title"><i>{{ child.title }}</i>. Oil on canvas. 2005.</div>
 	</a>
 	{% endfor %}
 
