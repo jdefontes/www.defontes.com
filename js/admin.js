@@ -23,7 +23,7 @@
 			var newButton = new YAHOO.widget.Button({
 				container: "newButton",
 				type: "menu",
-				label: "New Resource",
+				label: "New",
 				menu: items
 			});
 		},
