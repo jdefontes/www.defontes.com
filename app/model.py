@@ -15,7 +15,9 @@ class Article(Resource):
 
 class Artwork(Resource):
 	image_path = db.StringProperty()
+	media = db.StringProperty()
 	template = db.StringProperty()
+	year = db.StringProperty()
 
 class Folder(Resource):
 	body = db.TextProperty()

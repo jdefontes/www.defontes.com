@@ -23,8 +23,7 @@ a.thumb {
 	background: #f6f6f6;
 	margin: 1px;
 	text-decoration: none;
-	color: #999;
-	font-size: 93%;
+	color: #000;
 }
 a.thumb div.image {
 	height: 202px;
@@ -36,7 +35,11 @@ a.thumb div.image div img {
 }
 a.thumb div.title {
 	margin: 0 20px;
-	height: 3em;
+	width: 202px;
+	height: 4em;
+}
+a.thumb div.title span {
+	font-style: italic;
 }
 
 /* http://www.jakpsatweb.cz/css/css-vertical-center-solution.html */

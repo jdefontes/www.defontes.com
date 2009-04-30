@@ -79,13 +79,13 @@ class ResourceHandler(webapp.RequestHandler):
 			"class_name": resource.class_name(),
 			"author": str(resource.author),
 			"creation_date": resource.creation_date.strftime(dateformat),
-			"modification_date": resource.modification_date.strftime(dateformat),
-			"path": resource.path
+			"modification_date": resource.modification_date.strftime(dateformat)
 		}
 	
-		for p in [ "body", "image_path", "template", "title", "summary" ]:
-			if hasattr(resource, p):
-				result[p] = getattr(resource, p)
+		ignore = [ "_class", "author", "creation_date", "modification_date", "parent_resource" ]
+		properties = [ p for p in resource.properties() if p not in ignore ]
+		for p in properties:
+			result[p] = getattr(resource, p)
 		
 		if resource.class_name() == "Image":
 			result["image_blob"] = None
