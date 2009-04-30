@@ -24,21 +24,22 @@ a.thumb {
 	margin: 1px;
 	text-decoration: none;
 	color: #000;
+	padding: 22px;
 }
 a.thumb div.image {
 	height: 202px;
 	width: 202px;
-	margin: 22px;
+	text-align: center;
 }
 a.thumb div.image div img {
 	border: 1px solid #ccc;
 }
 a.thumb div.title {
-	margin: 0 20px;
 	width: 202px;
-	height: 4em;
+	margin-top: 22px;
+	height: 3em;
 }
-a.thumb div.title span {
+div.title span {
 	font-style: italic;
 }
 
@@ -51,7 +52,6 @@ a.thumb div.image {
 a.thumb div.image div {
 	display: table-cell;
 	vertical-align: middle;
-	text-align: center;
 	position: static;
 	#position: absolute;
 	#top: 50%;
@@ -63,6 +63,40 @@ a.thumb div.image div img {
 	#left: -50%;
 }
 /* end vertical centering */
+
+div.artwork {
+	background: #f6f6f6;
+	padding: 25px;
+}
+div.artwork div.image {
+	text-align: center;
+	height: 700px;
+	width: 700px;
+}
+div.artwork div.image img {
+	border: 1px solid #ccc;
+}
+/* http://www.jakpsatweb.cz/css/css-vertical-center-solution.html */
+div.artwork {
+	display: table;
+	position: static;
+	#position: relative;
+}
+div.artwork div.image {
+	display: table-cell;
+	vertical-align: middle;
+	position: static;
+	#position: absolute;
+	#top: 50%;
+	#left: 50%;
+}
+div.artwork div.image img {
+	#position: relative;
+	#top: -50%;
+	#left: -50%;
+}
+/* end vertical centering */
+
 
 .copyright {
 	font-size: 85%;

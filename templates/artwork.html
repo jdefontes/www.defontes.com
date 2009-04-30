@@ -2,8 +2,10 @@
 
 {% block content %}
 
-<h2>{{resource.title}}</h2>
+<div class="artwork">
 
-<img src="{{resource.image_path}}?w=750&h=750" alt="{{resource.title}}" />
+	<div class="image"><img src="{{resource.image_path}}?w=700&h=700" alt="{{resource.title}}" /></div>
+</div>
+<div class="title"><span>{{ resource.title }}.</span> {{ resource.year }}, {{ resource.media }}.</div>
 
 {% endblock %}
