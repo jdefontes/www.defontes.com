@@ -16,7 +16,7 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 
 class MetadataHandler(webapp.RequestHandler):
 	def get(self):
-		resources = [ model.Artwork(), model.Article(), model.Folder(), model.Image() ]
+		resources = [ model.Artwork(), model.Article(), model.Folder(), model.Image(), model.Tag() ]
 		hide = [ "_class", "parent_resource" ]
 		meta = [
 			dict([ (p, None) for p in r.properties() if p not in hide ] + [ ( "class_name", r.class_name() )])
@@ -147,6 +147,22 @@ class ResourceHandler(webapp.RequestHandler):
 						image = images.Image(resource.image_blob)
 						resource.width = image.width
 						resource.height = image.height
+				elif p == "tags":
+					old_tags = resource.tags
+					new_tags = [ name.strip() for name in value.split(',') if name.strip() != "" ]
+					tags = set(old_tags + new_tags)
+					for name in tags:
+						tag = model.Tag.all().filter("title = ", name).get()
+						if tag == None:
+							self.error(412) # Precondition Failed
+							self.response.out.write("tag " + name + " not found")
+							return
+						if name in new_tags and name not in old_tags:
+							tag.item_count = tag.item_count + 1
+						elif name in old_tags and name not in new_tags:
+							tag.item_count = tag.item_count - 1
+						tag.put()
+					setattr(resource, p, new_tags)
 				else:
 					setattr(resource, p, value)
 

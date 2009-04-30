@@ -11,11 +11,13 @@ class Resource(polymodel.PolyModel):
 
 class Article(Resource):
 	body = db.TextProperty()
+	tags = db.StringListProperty()
 	template = db.StringProperty()
 
 class Artwork(Resource):
 	image_path = db.StringProperty()
 	media = db.StringProperty()
+	tags = db.StringListProperty()
 	template = db.StringProperty()
 	year = db.StringProperty()
 
@@ -28,3 +30,7 @@ class Image(Resource):
 	mime_type = db.StringProperty()
 	width = db.IntegerProperty()
 	height = db.IntegerProperty()
+
+class Tag(Resource):
+	item_count = db.IntegerProperty(default=0)
+	template = db.StringProperty()
