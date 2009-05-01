@@ -60,6 +60,11 @@ textarea {
     background-repeat: no-repeat;
     background-position: 3px 50%;
 }
+.yui-skin-sam .yui-dt td.feed {
+    background-image: url(icon_feed.gif);
+    background-repeat: no-repeat;
+    background-position: 3px 50%;
+}
 .yui-skin-sam .yui-dt td.folder {
     background-image: url(icon_folder.gif);
     background-repeat: no-repeat;
@@ -96,6 +101,9 @@ textarea {
 }
 .yui-skin-sam #newButton li.artwork .yuimenuitemlabel{
     background-image: url(icon_artwork.gif);
+}
+.yui-skin-sam #newButton li.feed .yuimenuitemlabel{
+    background-image: url(icon_feed.gif);
 }
 .yui-skin-sam #newButton li.folder .yuimenuitemlabel{
     background-image: url(icon_folder.gif);

@@ -9,6 +9,7 @@ class Resource(polymodel.PolyModel):
 	title = db.StringProperty()
 	creation_date = db.DateTimeProperty(auto_now_add=True)
 	modification_date = db.DateTimeProperty(auto_now=True)
+	publication_date = db.DateTimeProperty()
 
 class Article(Resource):
 	body = db.TextProperty()
@@ -16,11 +17,16 @@ class Article(Resource):
 	template = db.StringProperty()
 
 class Artwork(Resource):
+	body = db.TextProperty()
 	image_path = db.StringProperty()
 	media = db.StringProperty()
 	tags = db.StringListProperty()
 	template = db.StringProperty()
 	year = db.StringProperty()
+
+class Feed(Resource):
+	body = db.TextProperty()
+	resource_type = db.StringProperty()
 
 class Folder(Resource):
 	body = db.TextProperty()

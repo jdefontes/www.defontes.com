@@ -5,6 +5,8 @@ import re
 import simplejson as json
 
 from app import model
+from app import PyRSS2Gen
+from datetime import datetime
 from google.appengine.api import images
 from google.appengine.api import memcache
 from google.appengine.api import users
@@ -16,7 +18,7 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 
 class MetadataHandler(webapp.RequestHandler):
 	def get(self):
-		resources = [ model.Artwork(), model.Article(), model.Folder(), model.Image(), model.Tag() ]
+		resources = [ model.Artwork(), model.Article(), model.Feed(), model.Folder(), model.Image(), model.Tag() ]
 		hide = [ "_class", "parent_resource" ]
 		meta = [
 			dict([ (p, None) for p in r.properties() if p not in hide ] + [ ( "class_name", r.class_name() )])
@@ -30,6 +32,7 @@ class Representation(object):
 		self.body = body
 
 class ResourceHandler(webapp.RequestHandler):
+	dateformat = "%b %d, %Y %H:%M"
 	def cached_representation(self, key):
 		representation = memcache.get(key)
 		if representation:
@@ -44,9 +47,7 @@ class ResourceHandler(webapp.RequestHandler):
 		send_json = accept.find("json") > -1
 		
 		representation = None
-		key = path
-		if self.request.query_string:
-			key = key + "?" + self.request.query_string
+		key = self.request.path_qs
 		
 		if not send_json:
 			representation = self.cached_representation(key)
@@ -73,6 +74,26 @@ class ResourceHandler(webapp.RequestHandler):
 	def handle_artwork(self, resource):
 		return self.template_representation(resource, None)
 	
+	def handle_feed(self, resource):
+		# TODO - model attribute for item count?
+		children =  model.__dict__[resource.resource_type].all().order("-publication_date").fetch(10)
+		rss = PyRSS2Gen.RSS2(
+		title = resource.title,
+		link = self.request.host_url + "/",
+		description = resource.body,
+		
+		lastBuildDate = datetime.now(),
+		
+		items = [
+			PyRSS2Gen.RSSItem(
+				title = c.title,
+				link = self.request.host_url + c.path,
+				description = c.body,
+				guid = PyRSS2Gen.Guid(self.request.host_url + c.path),
+				pubDate = c.publication_date)
+		for c in children])
+		return Representation("application/rss+xml", rss.to_xml())
+	
 	def handle_folder(self, resource):
 		return self.template_representation(resource, resource.child_resources)
 	
@@ -94,15 +115,15 @@ class ResourceHandler(webapp.RequestHandler):
 		return self.template_representation(resource, children)
 	
 	def json_representation(self, resource):
-		dateformat = "%b %d, %Y %H:%M"
 		result = {
 			"class_name": resource.class_name(),
 			"author": str(resource.author),
-			"creation_date": resource.creation_date.strftime(dateformat),
-			"modification_date": resource.modification_date.strftime(dateformat)
+			"creation_date": resource.creation_date.strftime(self.dateformat),
+			"modification_date": resource.modification_date.strftime(self.dateformat),
+			"publication_date": (resource.publication_date and resource.publication_date.strftime(self.dateformat) or None)
 		}
 	
-		ignore = [ "_class", "author", "creation_date", "modification_date", "parent_resource" ]
+		ignore = [ "_class", "author", "creation_date", "modification_date", "parent_resource", "publication_date" ]
 		properties = [ p for p in resource.properties() if p not in ignore ]
 		for p in properties:
 			result[p] = getattr(resource, p)
@@ -114,8 +135,9 @@ class ResourceHandler(webapp.RequestHandler):
 			result['child_resources'] = [ {
 				"class_name": c.class_name(),
 				"author": str(c.author),
-				"creation_date": c.creation_date.strftime(dateformat),
-				"modification_date": c.modification_date.strftime(dateformat),
+				"creation_date": c.creation_date.strftime(self.dateformat),
+				"modification_date": c.modification_date.strftime(self.dateformat),
+				"publication_date": (c.publication_date and c.publication_date.strftime(self.dateformat) or None),
 				"path": c.path,
 				"title": c.title
 			} for c in resource.child_resources.order("path") ]
@@ -174,6 +196,8 @@ class ResourceHandler(webapp.RequestHandler):
 						image = images.Image(resource.image_blob)
 						resource.width = image.width
 						resource.height = image.height
+				elif p == "publication_date":
+					setattr(resource, p, (value and datetime.strptime(value, self.dateformat) or None))
 				elif p == "tags":
 					old_tags = resource.tags
 					new_tags = [ name.strip() for name in value.split(',') if name.strip() != "" ]
