@@ -7,7 +7,7 @@
 <div>{{resource.body}}</div>
 
 <ul>
-	{% for child in resource.child_resources %}
+	{% for child in children %}
 	<li><a href="{{ child.path }}">{{ child.title }}</a></li>
 	{% endfor %}
 </ul>

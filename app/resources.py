@@ -24,25 +24,34 @@ class MetadataHandler(webapp.RequestHandler):
 		self.response.headers['Content-Type'] = "application/json"
 		self.response.out.write(json.dumps(meta))
 
+class Representation(object):
+	def __init__(self, content_type, body):
+		self.content_type = content_type
+		self.body = body
 
 class ResourceHandler(webapp.RequestHandler):
+	def cached_representation(self, key):
+		representation = memcache.get(key)
+		if representation:
+			logging.info("HIT: " + key)
+		else:
+			logging.info("MISS: " + key)
+		return representation
+		
 	def get(self, path):
 		# unbelievably robust content negotiation
 		accept = self.request.headers['Accept'] or ""
 		send_json = accept.find("json") > -1
 		
-		key = path
 		representation = None
+		key = path
 		if self.request.query_string:
 			key = key + "?" + self.request.query_string
 		
 		if not send_json:
-			representation = memcache.get(key)
+			representation = self.cached_representation(key)
 			
-		if representation:
-			logging.info("cache hit: " +key)
-		else:
-			logging.info("cache miss: " +key)
+		if not representation:
 			resource = model.Resource.all().filter("path = ", self.request.path).get()
 			
 			if resource == None:
@@ -51,28 +60,33 @@ class ResourceHandler(webapp.RequestHandler):
 			if send_json:
 				representation = self.json_representation(resource)
 			else:
-				if resource.class_name() == "Image":
-					representation = self.image_representation(resource)
-				else:
-					representation = self.html_representation(resource)
+				handler = ResourceHandler.__dict__["handle_" + resource.class_name().lower()]
+				representation = handler(self, resource)
 				memcache.set(key, representation)
 		
 		self.write(representation)
 
-	def html_representation(self, resource):
-		template_values = { "resource": resource }
-		template_name = resource.template or resource.class_name().lower() + ".html"
-		path = os.path.join(os.path.dirname(__file__), '..', 'templates', template_name )
-		return { "content_type": "text/html", "body": template.render(path, template_values) }
+	def handle_article(self, resource):
+		return self.template_representation(resource, None)
 	
-	def image_representation(self, resource):
+	def handle_artwork(self, resource):
+		return self.template_representation(resource, None)
+	
+	def handle_folder(self, resource):
+		return self.template_representation(resource, resource.child_resources)
+	
+	def handle_image(self, resource):
 		if self.request.get("w", None) != None and self.request.get("h", None) != None:
 			image = images.Image(resource.image_blob)
 			image.resize(width=int(self.request.get("w")), height=int(self.request.get("h")))
-			return { "content_type": "image/png", "body": image.execute_transforms(output_encoding=images.PNG) }
+			return Representation("image/png", image.execute_transforms(output_encoding=images.PNG))
 		else:
-			return { "content_type": resource.mime_type, "body": resource.image_blob }
+			return Representation(resource.mime_type, resource.image_blob)
 
+	def handle_tag(self, resource):
+		children = model.Resource.all().filter("tags = ", resource.title)
+		return self.template_representation(resource, children)
+	
 	def json_representation(self, resource):
 		dateformat = "%b %d, %Y %H:%M"
 		result = {
@@ -102,11 +116,20 @@ class ResourceHandler(webapp.RequestHandler):
 		
 		# browsers don't like the proper mime type: http://simonwillison.net/2009/Feb/6/json/
 		# and also a workaround for this: http://tech.groups.yahoo.com/group/ydn-javascript/message/29416
-		return { "content_type": "text/html", "body": json.dumps(result) }
+		return Representation("text/html", json.dumps(result))
+		
+	def template_representation(self, resource, children):
+		template_values = {
+			"resource": resource,
+			"children": children
+		}
+		template_name = resource.template or resource.class_name().lower() + ".html"
+		path = os.path.join(os.path.dirname(__file__), '..', 'templates', template_name )
+		return Representation("text/html", template.render(path, template_values))
 	
 	def write(self, representation):
-		self.response.headers['Content-Type'] = representation["content_type"]
-		self.response.out.write(representation["body"])
+		self.response.headers['Content-Type'] = representation.content_type
+		self.response.out.write(representation.body)
 
 		
 	# Using POST here even though PUT would be more REST-ful because

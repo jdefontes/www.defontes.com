@@ -7,7 +7,7 @@
 <div>{{resource.body}}</div>
 
 
-	{% for child in resource.child_resources %}
+	{% for child in children %}
 	<a class="thumb" href="{{ child.path }}">
 		<div class="image"><div><img src="{{ child.image_path }}?w=200&amp;h=200" alt="{{ child.title }}" /></div></div>
 		<div class="title"><span>{{ child.title }}.</span> {{ child.year }}, {{ child.media }}.</div>
