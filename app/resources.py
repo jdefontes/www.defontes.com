@@ -60,7 +60,8 @@ class ResourceHandler(webapp.RequestHandler):
 			if send_json:
 				representation = self.json_representation(resource)
 			else:
-				handler = ResourceHandler.__dict__["handle_" + resource.class_name().lower()]
+				handler_name = "handle_" + (resource.handler or resource.class_name().lower())
+				handler = ResourceHandler.__dict__[handler_name]
 				representation = handler(self, resource)
 				memcache.set(key, representation)
 		
@@ -74,6 +75,11 @@ class ResourceHandler(webapp.RequestHandler):
 	
 	def handle_folder(self, resource):
 		return self.template_representation(resource, resource.child_resources)
+	
+	# sample custom handler
+	#def handle_home(self, resource):
+	#	posts = model.Article.all().order("-creation_date").fetch(5)
+	#	return self.template_representation(resource, posts)
 	
 	def handle_image(self, resource):
 		if self.request.get("w", None) != None and self.request.get("h", None) != None:
