@@ -70,6 +70,11 @@ textarea {
     background-repeat: no-repeat;
     background-position: 3px 50%;
 }
+.yui-skin-sam .yui-dt td.tag {
+    background-image: url(icon_tag.gif);
+    background-repeat: no-repeat;
+    background-position: 3px 50%;
+}
 .yui-skin-sam .yui-dt td.up {
     background-image: url(icon_folder_back.gif);
     background-repeat: no-repeat;
@@ -97,4 +102,7 @@ textarea {
 }
 .yui-skin-sam #newButton li.image .yuimenuitemlabel{
     background-image: url(icon_file.gif);
+}
+.yui-skin-sam #newButton li.tag .yuimenuitemlabel{
+    background-image: url(icon_tag.gif);
 }
