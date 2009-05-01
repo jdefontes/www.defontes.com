@@ -148,9 +148,7 @@ class ResourceHandler(webapp.RequestHandler):
 				if len(parents) == 1:
 					parent_resource = parents[0]
 				else:
-					self.error(412) # Precondition Failed
-					self.response.out.write("parent folder " + parent_path + " not found")
-					return
+					return self.precondition_failed("parent folder " + parent_path + " not found")
 				
 				resource = model.__dict__[self.request.get("class_name")]()
 				resource.author = users.get_current_user()
@@ -177,9 +175,7 @@ class ResourceHandler(webapp.RequestHandler):
 					for name in tags:
 						tag = model.Tag.all().filter("title = ", name).get()
 						if tag == None:
-							self.error(412) # Precondition Failed
-							self.response.out.write("tag " + name + " not found")
-							return
+							return self.precondition_failed("tag " + name + " not found")
 						if name in new_tags and name not in old_tags:
 							tag.item_count = tag.item_count + 1
 						elif name in old_tags and name not in new_tags:
@@ -191,6 +187,10 @@ class ResourceHandler(webapp.RequestHandler):
 
 		resource.put()
 		self.write(self.json_representation(resource))
+	
+	def precondition_failed(self, message):
+		self.error(412) # Precondition Failed
+		self.response.out.write(message)
 
 def not_found(response):
 	path = os.path.join(os.path.dirname(__file__), '..', 'templates', '404.html')
