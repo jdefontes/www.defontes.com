@@ -3,6 +3,7 @@
 	YAHOO.util.Connect.initHeader("Accept", "application/json", true);
 		
 	YAHOO.util.Connect.asyncRequest('GET', '/__meta__/', {
+		cache: false,
 		success: function (o) {
 			var resources = YAHOO.lang.JSON.parse(o.responseText);
 			var items = [];
