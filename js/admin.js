@@ -68,7 +68,7 @@
 	};
 	
 	var config = {
-		height: '200px',
+		height: '145px',
 		width: '747px',
 		initialLoad: false
 	};

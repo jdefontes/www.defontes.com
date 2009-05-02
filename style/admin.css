@@ -12,10 +12,12 @@
 }
 form {
 	display: block;
-	border:solid 2px #b7ddf2;
+	border-bottom: 1px solid #b7ddf2;
+	border-left: 1px solid #b7ddf2;
+	border-right: 1px solid #b7ddf2;
 	background:#ebf4fb;
-	margin: 20px auto;
-	padding:14px;
+	margin: 0 auto;
+	padding: 14px;
 }
 label {
 	display:block;
@@ -31,10 +33,10 @@ input, textarea {
 	padding:4px 2px;
 	border:solid 1px #aacfe4;
 	width: 610px;
-	margin:2px 0 20px 10px;
+	margin:2px 0 10px 10px;
 }
 form img {
-	margin: 0 0 20px 70px;
+	margin: 0 0 10px 70px;
 	border:solid 1px #aacfe4;
 	clear:both;
 }
