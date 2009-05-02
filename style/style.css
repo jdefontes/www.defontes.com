@@ -65,16 +65,15 @@ a.thumb div.image div img {
 /* end vertical centering */
 
 div.artwork {
-	background: #f6f6f6;
-	padding: 25px;
+	margin-bottom: 24px;
 }
 div.artwork div.image {
 	text-align: center;
-	height: 700px;
-	width: 700px;
+	height: 680px;
+	width: 750px;
 }
 div.artwork div.image img {
-	border: 1px solid #ccc;
+	border: 1px solid #eee;
 }
 /* http://www.jakpsatweb.cz/css/css-vertical-center-solution.html */
 div.artwork {
