@@ -12,10 +12,10 @@
 }
 form {
 	display: block;
-	border-bottom: 1px solid #b7ddf2;
-	border-left: 1px solid #b7ddf2;
-	border-right: 1px solid #b7ddf2;
-	background:#ebf4fb;
+	border-bottom: 1px solid #7f7f7f;
+	border-left: 1px solid #7f7f7f;
+	border-right: 1px solid #7f7f7f;
+	background:#edf5ff;
 	margin: 0 auto;
 	padding: 14px;
 }
