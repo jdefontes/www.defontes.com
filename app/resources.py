@@ -43,7 +43,7 @@ class ResourceHandler(webapp.RequestHandler):
 		
 	def get(self, path):
 		# unbelievably robust content negotiation
-		accept = self.request.headers['Accept'] or ""
+		accept = (self.request.headers.has_key('Accept') and self.request.headers['Accept'] or "")
 		send_json = accept.find("json") > -1
 		
 		representation = None
