@@ -33,7 +33,7 @@ class Representation(object):
 class ResourceHandler(webapp.RequestHandler):
     dateformat = "%b %d, %Y %H:%M"
     def cached_representation(self, key):
-        representation = memcache.get(key)
+        representation = None #memcache.get(key)
         if representation:
             logging.info("HIT: " + key)
         else:
@@ -74,13 +74,13 @@ class ResourceHandler(webapp.RequestHandler):
         return self.template_representation(resource, None)
     
     def handle_feed(self, resource):
+        # TODO - model attribute for item count?
+        children =  model.__dict__[resource.resource_type].all().order("-publication_date").fetch(10)
         feed = rss.RssFeed(
-            title = "Channel title here",
-            description = "Channel description here.",
+            title = resource.title,
+            description = resource.body,
             link = self.request.host_url + "/"
         )
-        # TODO - model attribute for item count?
-#        children =  model.__dict__[resource.resource_type].all().order("-publication_date").fetch(10)
 #        rss = PyRSS2Gen.RSS2(
 #        title = resource.title,
 #        link = self.request.host_url + "/",
