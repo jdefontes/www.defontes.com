@@ -1,56 +1,56 @@
 ﻿#folder-wrap {
-	background-color: #f9f9f9;
-	border-top: 1px solid #7f7f7f;
-	border-left: 1px solid #7f7f7f;
-	border-right: 1px solid #7f7f7f;
+    background-color: #f9f9f9;
+    border-top: 1px solid #7f7f7f;
+    border-left: 1px solid #7f7f7f;
+    border-right: 1px solid #7f7f7f;
 }
 #folder {
-	background: url(icon_folder.gif) no-repeat 2px 0;
-	padding-left: 24px;
-	margin: 14px 10px;
-	float: left;
+    background: url(icon_folder.gif) no-repeat 2px 0;
+    padding-left: 24px;
+    margin: 14px 10px;
+    float: left;
 }
 form {
-	display: block;
-	border-bottom: 1px solid #7f7f7f;
-	border-left: 1px solid #7f7f7f;
-	border-right: 1px solid #7f7f7f;
-	background:#edf5ff;
-	margin: 0 auto;
-	padding: 14px;
+    display: block;
+    border-bottom: 1px solid #7f7f7f;
+    border-left: 1px solid #7f7f7f;
+    border-right: 1px solid #7f7f7f;
+    background:#edf5ff;
+    margin: 0 auto;
+    padding: 14px;
 }
 label {
-	display:block;
-	font-weight:bold;
-	text-align:right;
-	width: 60px;
-	padding: 6px 0;
-	float:left;
+    display:block;
+    font-weight:bold;
+    text-align:right;
+    width: 60px;
+    padding: 6px 0;
+    float:left;
 }
 input, textarea {
-	float:left;
-	font-size:14px;
-	padding:4px 2px;
-	border:solid 1px #aacfe4;
-	width: 610px;
-	margin:2px 0 10px 10px;
+    float:left;
+    font-size:14px;
+    padding:4px 2px;
+    border:solid 1px #aacfe4;
+    width: 610px;
+    margin:2px 0 10px 10px;
 }
 form img {
-	margin: 0 0 10px 70px;
-	border:solid 1px #aacfe4;
-	clear:both;
+    margin: 0 0 10px 70px;
+    border:solid 1px #aacfe4;
+    clear:both;
 }
 textarea {
-	font-family: "Lucida Console", monospace;
+    font-family: "Lucida Console", monospace;
 }
 .buttons {
-	clear:both;
-	margin-left: 70px;
+    clear:both;
+    margin-left: 70px;
 }
 #message {
-	display: none;
-	color: #8ac;
-	margin-left: 10px;
+    display: none;
+    color: #8ac;
+    margin-left: 10px;
 }
 .yui-skin-sam .yui-dt td.article {
     background-image: url(icon_article.gif);
@@ -88,7 +88,7 @@ textarea {
     background-position: 3px 50%;
 }
 .yui-skin-sam .yui-dt td.right {
-	text-align: right;
+    text-align: right;
 }
 .yui-skin-sam .yui-dt-scrollable .yui-dt-bd { 
     overflow-y: scroll; 

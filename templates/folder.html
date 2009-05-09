@@ -7,9 +7,9 @@
 <div>{{resource.body}}</div>
 
 <ul>
-	{% for child in children %}
-	<li><a href="{{ child.path }}">{{ child.title }}</a></li>
-	{% endfor %}
+    {% for child in children %}
+    <li><a href="{{ child.path }}">{{ child.title }}</a></li>
+    {% endfor %}
 </ul>
 
 {% endblock %}
