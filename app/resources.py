@@ -79,7 +79,8 @@ class ResourceHandler(webapp.RequestHandler):
         feed = rss.RssFeed(
             title = resource.title,
             description = resource.body,
-            link = self.request.host_url + "/"
+            link = self.request.host_url + "/",
+            email = "jason@defontes.com (Jason DeFontes)"
         )
 #        rss = PyRSS2Gen.RSS2(
 #        title = resource.title,

@@ -2,7 +2,7 @@
 from xml.dom import getDOMImplementation
 
 class RssFeed:
-    def __init__(self, title, description, link):
+    def __init__(self, title, description, link, email=None):
         self.document = getDOMImplementation().createDocument(None, "rss", None)
         rss = self.document.documentElement
         rss.setAttribute("version", "2.0")
@@ -20,10 +20,26 @@ class RssFeed:
         elem.appendChild(self.document.createTextNode(link))
         channel.appendChild(elem)
         
+        elem = self.document.createElement("docs")
+        elem.appendChild(self.document.createTextNode("http://www.rssboard.org/rss-specification"))
+        channel.appendChild(elem)
+        
+        elem = self.document.createElement("generator")
+        elem.appendChild(self.document.createTextNode("Mr. Fusion"))
+        channel.appendChild(elem)
+        
         elem = self.document.createElement("lastBuildDate")
         elem.appendChild(self.document.createTextNode(rfc822_date(datetime.now())))
         channel.appendChild(elem)
-
+        
+        if email is not None:
+            elem = self.document.createElement("managingEditor")
+            elem.appendChild(self.document.createTextNode(email))
+            channel.appendChild(elem)
+            elem = self.document.createElement("webMaster")
+            elem.appendChild(self.document.createTextNode(email))
+            channel.appendChild(elem)
+        
         rss.appendChild(channel)
 
     def to_xml(self):
