@@ -75,29 +75,33 @@ class ResourceHandler(webapp.RequestHandler):
     
     def handle_feed(self, resource):
         # TODO - model attribute for item count?
+        # TODO - model attributes for other hard-coded values?
         children =  model.__dict__[resource.resource_type].all().order("-publication_date").fetch(10)
+        last_modified = None
+        for c in children:
+            if last_modified is None or c.publication_date > last_modified:
+                last_modified = c.publication_date
+        
         feed = rss.RssFeed(
             title = resource.title,
             description = resource.body,
             link = self.request.host_url + "/",
-            email = "jason@defontes.com (Jason DeFontes)"
+            copyright = "Copyright 2009 Jason DeFontes",
+            email = "jason@defontes.com (Jason DeFontes)",
+            pub_date = last_modified,
+            rss_link = self.request.host_url + resource.path
         )
-#        rss = PyRSS2Gen.RSS2(
-#        title = resource.title,
-#        link = self.request.host_url + "/",
-#        description = resource.body,
-#        
-#        lastBuildDate = datetime.now(),
-#        
-#        items = [
-#            PyRSS2Gen.RSSItem(
-#                title = c.title,
-#                link = self.request.host_url + c.path,
-#                description = c.body,
-#                guid = PyRSS2Gen.Guid(self.request.host_url + c.path),
-#                pubDate = c.publication_date)
-#        for c in children])
-#        return Representation("application/rss+xml", rss.to_xml())
+        
+        for c in children:
+            # TODO - fix relative URLs in body
+            feed.add_item(
+                title = c.title,
+                description = c.body,
+                link = self.request.host_url + c.path,
+                author = "jason@defontes.com (Jason DeFontes)",
+                pub_date = c.publication_date
+            )
+        
         return Representation("application/rss+xml", feed.to_xml())
     
     def handle_folder(self, resource):
