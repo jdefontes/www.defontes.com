@@ -6,6 +6,7 @@ import simplejson as json
 
 from app import model
 from app import rss
+from app.BeautifulSoup import BeautifulSoup
 from datetime import datetime
 from google.appengine.api import images
 from google.appengine.api import memcache
@@ -93,10 +94,14 @@ class ResourceHandler(webapp.RequestHandler):
         )
         
         for c in children:
-            # TODO - fix relative URLs in body
+            # fix links to local URLs in body
+            soup = BeautifulSoup(c.body, fromEncoding='utf-8')
+            for link in soup.findAll('a', href=re.compile('^\/.*')):
+            	logging.info(link['href'])
+            	link['href'] = self.request.host_url + link['href']
             feed.add_item(
                 title = c.title,
-                description = c.body,
+                description = unicode(soup),
                 link = self.request.host_url + c.path,
                 author = "jason@defontes.com (Jason DeFontes)",
                 pub_date = c.publication_date
