@@ -121,7 +121,7 @@ class ResourceHandler(webapp.RequestHandler):
         if self.request.get("w", None) != None and self.request.get("h", None) != None:
             image = images.Image(resource.image_blob)
             image.resize(width=int(self.request.get("w")), height=int(self.request.get("h")))
-            return Representation("image/png", image.execute_transforms(output_encoding=images.PNG))
+            return Representation("image/jpeg", image.execute_transforms(output_encoding=images.JPEG))
         else:
             return Representation(resource.mime_type, resource.image_blob)
 
