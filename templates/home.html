@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="row">
+    <div class="column span-3">
+        <div>{{resource.body}}</div>
+    </div>
+    <div class="column span-6">
+        {% for child in children %}
+            <div class="post">
+                <h2><a href="{{ child.path }}">{{ child.title }}</a></h2>
+                <div>{{ child.body }}</div>
+                <div class="date">{{ child.publication_date|date:"Y.m.d P T" }}</div>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="column span-3">
+        <div id="right">
+            <h2>Something</h2>
+            <p>Content of some type will go here. Whatever. Use ExtendedBody for this part.</p>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

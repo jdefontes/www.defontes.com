@@ -11,47 +11,55 @@
         {% endif %}
     </title>
     <link rel="icon" type="image/vnd.microsoft.icon" href="/favicon.ico" />
-    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/reset-fonts-grids/reset-fonts-grids.css" /> 
-    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/base/base-min.css" />
+    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/reset/reset-min.css" /> 
+    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/fonts/fonts-min.css" />
     <link rel="stylesheet" type="text/css" href="/style/style.css" />
 {% block head %}{% endblock %}
 </head>
-<body>
-
-<div id="doc">
-    <div id="hd">
-        <div class="yui-g">
-            <div class="yui-u first">
-                <h1>Jason DeFontes</h1>
-            </div>
-            <div class="yui-u">
-                <ul id="nav">
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/art/">Artwork</a></li>
-                    <li><a href="/blog/">Blog</a></li>
-                    <li><a href="/about/">About</a></li>
-                </ul>
-            </div>
+<body class="body">
+<div id="wrap">
+    <div class="row">
+        <div class="column span-3">
+            <h1 id="logo"><span class="replaced">Jason DeFontes</span></h1>
+        </div>
+        <div class="column span-9">
+            <ul id="nav">
+                <li><a href="/">Home</a></li>
+                <li><a href="/art/">Artwork</a></li>
+                <li><a href="/blog/">Blog</a></li>
+                <li><a href="/about/">About</a></li>
+            </ul>
         </div>
     </div>
-    <div id="bd">
+    <div class="row">
+        <div class="column span-12">
 {% block content %}{% endblock %}
+        </div>
     </div>
-    <div id="ft">
+    <div class="row">
+        <div class="column span-12">
+            <div id="icon"></div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="column span-12">
         <p class="copyright">Copyright &copy 1995-2009, Jason DeFontes. All rights reserved.</p>
     </div>
 </div>
 
 <!-- begin google analytics -->
 <script type="text/javascript">
-var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+    var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+    document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
 </script>
 <script type="text/javascript">
-try {
-var pageTracker = _gat._getTracker("UA-332017-1");
-pageTracker._trackPageview();
-} catch(err) {}</script>
+    try {
+        var pageTracker = _gat._getTracker("UA-332017-1");
+        pageTracker._trackPageview();
+    } catch(err) {
+    }
+</script>
 <!-- end google analytics -->
 </body>
 </html>

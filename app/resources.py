@@ -113,9 +113,9 @@ class ResourceHandler(webapp.RequestHandler):
         return self.template_representation(resource, resource.child_resources)
     
     # sample custom handler
-    #def handle_home(self, resource):
-    #    posts = model.Article.all().order("-creation_date").fetch(5)
-    #    return self.template_representation(resource, posts)
+    def handle_home(self, resource):
+        posts = model.Article.all().order("-publication_date").fetch(5)
+        return self.template_representation(resource, posts)
     
     def handle_image(self, resource):
         if self.request.get("w", None) != None and self.request.get("h", None) != None:

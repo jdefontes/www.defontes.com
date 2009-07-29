@@ -6,10 +6,24 @@
 
 <div>{{resource.body}}</div>
 
-<ul>
+<table>
     {% for child in children %}
-    <li><a href="{{ child.path }}">{{ child.title }}</a></li>
+    <tr>
+        <td style="text-align: center;">
+            {% ifequal child.class_name "Image" %}
+            <img src="{{ child.path }}?w=64&h=64" />
+            {% else %}
+            {{ child.class_name }}
+            {% endifequal %}
+        </td>
+        <td>
+            <a href="{{ child.path }}">{{ child.title }}</a>
+        </td>
+        <td>
+            {{ child.publication_date }}
+        </td>
+    </tr>
     {% endfor %}
-</ul>
+</table>
 
 {% endblock %}
