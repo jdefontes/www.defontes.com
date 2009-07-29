@@ -4,7 +4,7 @@
 
 <div class="row">
     <div class="column span-3">
-        <div>{{resource.body}}</div>
+        <div>{{resource.body|default:"&nbsp;"}}</div>
     </div>
     <div class="column span-6">
         {% for child in children %}
@@ -16,10 +16,12 @@
         {% endfor %}
         {% if children %}
             <h3><a href="/blog/">Blog Archive &raquo;</a></h3>
+        {% else %}
+            &nbsp;
         {% endif %}
     </div>
     <div class="column span-3">
-        <div id="right">{{resource.body_extended}}</div>
+        <div id="right">{{resource.body_extended|default:"&nbsp;"}}</div>
     </div>
 </div>
 

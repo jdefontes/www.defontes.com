@@ -1,3 +1,4 @@
+import datetime
 import os
 
 from app import model
@@ -17,6 +18,7 @@ class MainPage(webapp.RequestHandler):
             root = model.Folder()
             root.path = "/"
             root.author = users.get_current_user()
+            root.publication_date = datetime.datetime.now()
             root.put()
         
         path = os.path.join(os.path.dirname(__file__), '..', 'templates', 'admin.html')

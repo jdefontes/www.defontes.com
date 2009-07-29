@@ -2,10 +2,11 @@
 
 {% block content %}
 
-<h2>{{resource.title}}</h2>
+{% if resource.title %}<h2>{{resource.title}}</h2>{% endif %}
 
-<div>{{resource.body}}</div>
+{% if resource.body %}<div>{{resource.body}}</div>{% endif %}
 
+{% if children %}
 <table>
     {% for child in children %}
     <tr>
@@ -25,5 +26,6 @@
     </tr>
     {% endfor %}
 </table>
+{% endif %}
 
 {% endblock %}

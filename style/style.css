@@ -24,24 +24,22 @@ html {
 
 /* base, adapted from YUI base.css */
 h1,h2 {
-    color: #777;
+	color: #D72E00;
 	/*18px via YUI Fonts CSS foundation*/
 	font-size:138.5%;
 }
-/*
 h2 {
-	/*16px via YUI Fonts CSS foundation*/
-	font-size:123.1%;
+	/*16px via YUI Fonts CSS foundation
+	font-size:123.1%;*/
 }
-*/
 h3 {
-	/*14px via YUI Fonts CSS foundation*/
-	font-size:108%;  
+    color: #F8B414;
+    /*14px via YUI Fonts CSS foundation*/
+	font-size:108%;
 }
 h1,h2,h3 {
 	/* top & bottom margin based on font size */
 	margin:1em 0;
-	color: #D72E00;
 	letter-spacing: 1px;
 }
 h1,h2,h3,h4,h5,h6,strong {
@@ -191,7 +189,7 @@ span.replaced {
 .post h2 a:hover {
     color: #2F8FBF;
 }
-.post .date {
+.date {
     color: #999;
     font-size: 85%;
     margin: 1em 0 3em 0;
