@@ -94,10 +94,13 @@ class ResourceHandler(webapp.RequestHandler):
         )
         
         for c in children:
+            if resource.template:
+                body = self.render_template(resource.template, { "child": c })
+            else:
+                body = c.body
             # fix links to local URLs in body
-            soup = BeautifulSoup(c.body, fromEncoding='utf-8')
+            soup = BeautifulSoup(body, fromEncoding='utf-8')
             for link in soup.findAll('a', href=re.compile('^\/.*')):
-            	logging.info(link['href'])
             	link['href'] = self.request.host_url + link['href']
             feed.add_item(
                 title = c.title,
@@ -160,15 +163,18 @@ class ResourceHandler(webapp.RequestHandler):
         # browsers don't like the proper mime type: http://simonwillison.net/2009/Feb/6/json/
         # and also a workaround for this: http://tech.groups.yahoo.com/group/ydn-javascript/message/29416
         return Representation("text/html", json.dumps(result))
-        
+    
+    def render_template(self, template_name, template_values):
+        path = os.path.join(os.path.dirname(__file__), '..', 'templates', template_name )
+        return template.render(path, template_values)
+    
     def template_representation(self, resource, children):
         template_values = {
             "resource": resource,
             "children": children
         }
         template_name = resource.template or resource.class_name().lower() + ".html"
-        path = os.path.join(os.path.dirname(__file__), '..', 'templates', template_name )
-        return Representation("text/html", template.render(path, template_values))
+        return Representation("text/html", self.render_template(template_name, template_values))
     
     def write(self, representation):
         self.response.headers['Content-Type'] = representation.content_type

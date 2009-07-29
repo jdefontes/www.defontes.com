@@ -4,6 +4,18 @@
 
 <h2>{{resource.title}}</h2>
 
-<div>{{resource.body}}</div>
+<div>
+{{resource.body}}
+{% if resource.body_extended %}{{resource.body_extended}}{% endif %}
+</div>
 
+<table>
+<tr><td>Publication Date</td><td>
+    {{ resource.publication_date|date:"r" }}<br />
+    {{ resource.publication_date }}
+</td></tr>
+<tr><td>Creation Date</td><td>{{ resource.creation_date|date:"r" }}</td></tr>
+<tr><td>Modification Date</td><td>{{ resource.modification_date|date:"r" }}</td></tr>
+<tr><td>Now</td><td>{% now "r" %}</td></tr>
+</table>
 {% endblock %}

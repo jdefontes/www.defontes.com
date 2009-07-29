@@ -10,7 +10,7 @@
         {% for child in children %}
             <div class="post">
                 <h2><a href="{{ child.path }}">{{ child.title }}</a></h2>
-                <div>{{ child.body }}</div>
+                {% include "post_body.html" %}
                 <div class="date">{{ child.publication_date|date:"Y.m.d P T" }}</div>
             </div>
         {% endfor %}

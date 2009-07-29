@@ -13,6 +13,7 @@ class Resource(polymodel.PolyModel):
 
 class Article(Resource):
     body = db.TextProperty()
+    body_extended = db.TextProperty()
     tags = db.StringListProperty()
     template = db.StringProperty()
 
@@ -26,6 +27,7 @@ class Artwork(Resource):
 
 class Feed(Resource):
     body = db.TextProperty()
+    template = db.StringProperty()
     resource_type = db.StringProperty()
 
 class Folder(Resource):
