@@ -161,7 +161,7 @@ span.replaced {
 }
 #nav li a {
     display: block;
-    line-height: 27px;
+    line-height: 36px;
     margin: 0 2em 0 0;
     text-decoration: none;
 }
@@ -199,6 +199,12 @@ span.replaced {
 #right h2 {
     color: #F8B414;
     margin: 0 0 1em 0;
+}
+
+/* blog */
+table.archive th, table.archive td {
+    border: none;
+    vertical-align: top;
 }
 
 /* galery */

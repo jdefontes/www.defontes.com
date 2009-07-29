@@ -74,6 +74,10 @@ class ResourceHandler(webapp.RequestHandler):
     def handle_artwork(self, resource):
         return self.template_representation(resource, None)
     
+    def handle_blog(self, resource):
+        posts = model.Article.all().order("-publication_date").fetch(1000)
+        return self.template_representation(resource, posts)
+    
     def handle_feed(self, resource):
         # TODO - model attribute for item count?
         # TODO - model attributes for other hard-coded values?
