@@ -14,12 +14,12 @@
                 <div class="date">{{ child.publication_date|date:"Y.m.d P T" }}</div>
             </div>
         {% endfor %}
+        {% if children %}
+            <h3><a href="/blog/">Blog Archive &raquo;</a></h3>
+        {% endif %}
     </div>
     <div class="column span-3">
-        <div id="right">
-            <h2>Something</h2>
-            <p>Content of some type will go here. Whatever. Use ExtendedBody for this part.</p>
-        </div>
+        <div id="right">{{resource.body_extended}}</div>
     </div>
 </div>
 

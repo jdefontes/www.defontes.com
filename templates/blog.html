@@ -6,33 +6,27 @@
 
 <div>{{resource.body}}</div>
 
-<div class="row">
-    <div class="column span-3">&nbsp;</div>
-    <div class="column span-6">
-        <table class="archive">
-            {% for child in children %}
-            <tr>
-                <td>
-                {% ifchanged child.publication_date.year %}
-                    <b>{{ child.publication_date|date:"Y" }}</b>
-                {% endifchanged %}
-                </td>
-                <td>
-                {% ifchanged child.publication_date.year child.publication_date.month %}
-                    {{ child.publication_date|date:"M" }}
-                {% endifchanged %}
-                </td>
-                <td>
-                    {{ child.publication_date|date:"d" }}
-                </td>
-                <td>
-                    <a href="{{ child.path }}">{{ child.title }}</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
-    </div>
-    <div class="column span-3">&nbsp;</div>
-</div>
+<table class="archive">
+    {% for child in children %}
+    <tr>
+        <td>
+        {% ifchanged child.publication_date.year %}
+            <b>{{ child.publication_date|date:"Y" }}</b>
+        {% endifchanged %}
+        </td>
+        <td>
+        {% ifchanged child.publication_date.year child.publication_date.month %}
+            {{ child.publication_date|date:"M" }}
+        {% endifchanged %}
+        </td>
+        <td>
+            {{ child.publication_date|date:"d" }}
+        </td>
+        <td>
+            <a href="{{ child.path }}">{{ child.title }}</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
 
 {% endblock %}
