@@ -2,7 +2,7 @@ import logging
 import mimetypes
 import os
 import re
-import simplejson as json
+from django.utils import simplejson as json
 
 from app import model
 from app import rss
