@@ -212,8 +212,9 @@ a.thumb {
     color: #666;
 }
 a.thumb div.image {
-    height: 280px;
-    width: 280px;
+    height: 278px;
+    width: 278px;
+    border: 1px solid #eee;
     text-align: center;
 }
 a.thumb div.image div img {
@@ -221,7 +222,7 @@ a.thumb div.image div img {
 }
 a.thumb div.title {
     font-size: 93%;
-    margin-top: 0.5em;
+    margin: 0.5em 0 1em 0;
     height: 3em;
 }
 div.title span {
@@ -250,12 +251,12 @@ a.thumb div.image div img {
 /* end vertical centering */
 
 div.artwork {
-    margin-bottom: 24px;
+    margin: 60px 0;
 }
 div.artwork div.image {
     text-align: center;
-    height: 680px;
-    width: 960px;
+    height: 500px;
+    width: 600px;
 }
 div.artwork div.image img {
     border: 1px solid #ccc;
@@ -287,6 +288,7 @@ div.artwork div.image img {
     margin-top: 40px;
     height: 16px;
     background: url(favicon.png) no-repeat top left;
+    opacity: 0.2;
 }
 .copyright {
     font-size: 85%;
