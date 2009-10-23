@@ -138,10 +138,13 @@ span.replaced {
 
 /* top nav */
 #logo {
-    width: 200px;
-    height: 27px;
     margin: 0 0 1em 0;
     background: url(jason_defontes_logo_200.gif) no-repeat top left;
+}
+#logo a {
+    display: block;
+    width: 200px;
+    height: 27px;
 }
 #nav {
     float: left;

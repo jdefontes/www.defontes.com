@@ -32,6 +32,7 @@ class Feed(Resource):
 
 class Folder(Resource):
     body = db.TextProperty()
+    body_extended = db.TextProperty()
     template = db.StringProperty()
 
 class Image(Resource):

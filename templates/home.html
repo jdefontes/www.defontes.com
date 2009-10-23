@@ -3,10 +3,12 @@
 {% block content %}
 
 <div class="row">
-    <div class="column span-3">
+    <div class="column span-12">
         <div>{{resource.body|default:"&nbsp;"}}</div>
     </div>
-    <div class="column span-6">
+</div>
+<div class="row">
+    <div class="column span-7">
         {% for child in children %}
             <div class="post">
                 <h2><a href="{{ child.path }}">{{ child.title }}</a></h2>
@@ -20,7 +22,7 @@
             &nbsp;
         {% endif %}
     </div>
-    <div class="column span-3">
+    <div class="column span-5">
         <div id="right">{{resource.body_extended|default:"&nbsp;"}}</div>
     </div>
 </div>
