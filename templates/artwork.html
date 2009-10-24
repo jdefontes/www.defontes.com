@@ -1,25 +1,29 @@
 {% extends "layout.html" %}
 
+{% block title %} {{ resource.title }}, {{ resource.year }} | {{ block.super }}{% endblock %}
+
 {% block content %}
 
-<div class="row">
-    <div class="column span-2">
-        &nbsp;
-    </div>
-    <div class="column span-8">
-        <div class="artwork">
-            <div class="image"><img src="{{resource.image_path}}?w=598&h=498" alt="{{resource.title}}" /></div>
-        </div>
+<div class="row artwork">
+    <div class="column span-12">
+
+        <div class="image"><img src="{{resource.image_path}}?w=918&h=648" alt="{{resource.title}}" /></div>
+
         <div class="row">
-            <div class="column span-4">
-                <div class="title">
-                    <span>{{ resource.title }}</span><br />
-                    {{ resource.year }}<br />
-                    {{ resource.media }}<br />
-                    [ dimensions ]
+            <div class="column span-6">
+                <div class="catalog">
+                    <span class="title">{{ resource.title }}</span>,
+                    <span class="year">{{ resource.year }}</span>
+                    <span class="media">{{ resource.media }}</span>,
+                    <span class="dimensions">{{ resource.dimensions }}</span>
+                </div>
+                <div class="description">
+                    {{ resource.body }}
                 </div>
             </div>
-            <div class="column span-4">
+            <div class="column span-6">
+                <h3>Related</h3>
+                <!--
                 <div style="margin: 0 -5px;">
                     <div style="width: 62px; margin: 0 5px 10px 5px; float: left;">
                         <img src="{{resource.image_path}}?w=62&h=62" alt="{{resource.title}}" />
@@ -40,11 +44,9 @@
                         <img src="{{resource.image_path}}?w=62&h=62" alt="{{resource.title}}" />
                     </div>
                 </div>
+                -->
             </div>
         </div>
-    </div>
-    <div class="column span-2">
-        &nbsp;
     </div>
 </div>
 

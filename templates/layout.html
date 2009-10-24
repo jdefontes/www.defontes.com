@@ -3,13 +3,7 @@
 <head> 
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="verify-v1" content="vVp8v5+HxQhLBO1I7svFv+9dwvXBLpSoz/FtqwBP/0g=" />
-    <title>
-        {% if resource.title %}
-            {{ resource.title }} | Jason DeFontes
-        {% else %}
-            Jason DeFontes
-        {% endif %}
-    </title>
+    <title>{% block title %}Jason DeFontes{% endblock %}</title>
     <link rel="icon" type="image/vnd.microsoft.icon" href="/favicon.ico" />
     <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/reset/reset-min.css" /> 
     <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/fonts/fonts-min.css" />

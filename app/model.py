@@ -19,6 +19,7 @@ class Article(Resource):
 
 class Artwork(Resource):
     body = db.TextProperty()
+    dimensions = db.StringProperty()
     image_path = db.StringProperty()
     media = db.StringProperty()
     tags = db.StringListProperty()

@@ -23,7 +23,7 @@ label {
     display:block;
     font-weight:bold;
     text-align:right;
-    width: 60px;
+    width: 80px;
     padding: 6px 0;
     float:left;
 }
@@ -32,7 +32,7 @@ input, textarea {
     font-size:14px;
     padding:4px 2px;
     border:solid 1px #aacfe4;
-    width: 610px;
+    width: 590px;
     margin:2px 0 10px 10px;
 }
 form img {
