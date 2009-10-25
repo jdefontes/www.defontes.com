@@ -5,6 +5,7 @@ class Resource(polymodel.PolyModel):
     parent_resource = db.SelfReferenceProperty(collection_name="child_resources")
     author = db.UserProperty()
     handler = db.StringProperty()
+    main_navigation = db.IntegerProperty()
     path = db.StringProperty()
     title = db.StringProperty()
     creation_date = db.DateTimeProperty(auto_now_add=True)

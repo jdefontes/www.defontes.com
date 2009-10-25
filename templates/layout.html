@@ -17,14 +17,11 @@
             <h1 id="logo"><a href="/"><span class="replaced">Jason DeFontes</span></a></h1>
         </div>
         <div class="column span-9">
-            <!--
             <ul id="nav">
-                <li><a href="/">Home</a></li>
-                <li><a href="/art/">Artwork</a></li>
-                <li><a href="/blog/">Blog</a></li>
-                <li><a href="/about/">About</a></li>
+            {% for nav_item in resource.navigation %}
+                <li><a href="{{ nav_item.path }}">{{ nav_item.title }}</a></li>
+            {% endfor %}
             </ul>
-            -->
         </div>
     </div>
     <div class="row">

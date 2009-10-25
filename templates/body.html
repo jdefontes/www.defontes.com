@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="row">
+    <div class="column span-12">
+{% if resource.body %}{{resource.body}}{% endif %}
+{% if resource.body_extended %}{{resource.body_extended}}{% endif %}
+    </div>
+</div>
+
+{% endblock %}

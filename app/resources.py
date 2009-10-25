@@ -54,6 +54,7 @@ class ResourceHandler(webapp.RequestHandler):
             
         if not representation:
             resource = model.Resource.all().filter("path = ", self.request.path).get()
+            resource.navigation = model.Resource.all().filter("main_navigation >", 0).order("main_navigation").fetch(100)
             
             if resource == None:
                 return not_found(self.response)
@@ -221,6 +222,8 @@ class ResourceHandler(webapp.RequestHandler):
                         image = images.Image(resource.image_blob)
                         resource.width = image.width
                         resource.height = image.height
+                elif p == "main_navigation":
+                    setattr(resource, p, (value and int(value)) or None)
                 elif p == "publication_date":
                     setattr(resource, p, (value and datetime.strptime(value, self.dateformat) or None))
                 elif p == "tags":

@@ -36,7 +36,7 @@ input, textarea {
     margin:2px 0 10px 10px;
 }
 form img {
-    margin: 0 0 10px 70px;
+    margin: 0 0 10px 90px;
     border:solid 1px #aacfe4;
     clear:both;
 }
@@ -45,7 +45,7 @@ textarea {
 }
 .buttons {
     clear:both;
-    margin-left: 70px;
+    margin-left: 90px;
 }
 #message {
     display: none;
