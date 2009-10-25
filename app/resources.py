@@ -54,7 +54,6 @@ class ResourceHandler(webapp.RequestHandler):
             
         if not representation:
             resource = model.Resource.all().filter("path = ", self.request.path).get()
-            resource.navigation = model.Resource.all().filter("main_navigation >", 0).order("main_navigation").fetch(100)
             
             if resource == None:
                 return not_found(self.response)
@@ -62,6 +61,7 @@ class ResourceHandler(webapp.RequestHandler):
             if send_json:
                 representation = self.json_representation(resource)
             else:
+                resource.navigation = model.Resource.all().filter("main_navigation >", 0).order("main_navigation").fetch(100)
                 handler_name = "handle_" + (resource.handler or resource.class_name().lower())
                 handler = ResourceHandler.__dict__[handler_name]
                 representation = handler(self, resource)
