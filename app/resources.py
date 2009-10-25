@@ -34,7 +34,7 @@ class Representation(object):
 class ResourceHandler(webapp.RequestHandler):
     dateformat = "%b %d, %Y %H:%M"
     def cached_representation(self, key):
-        representation = None #memcache.get(key)
+        representation = memcache.get(key)
         if representation:
             logging.info("HIT: " + key)
         else:
