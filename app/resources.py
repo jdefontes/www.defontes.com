@@ -56,6 +56,16 @@ class ResourceHandler(webapp.RequestHandler):
             resource = model.Resource.all().filter("path = ", self.request.path).get()
             
             if resource == None:
+                # see if adding or removing a trailing slash finds anything
+                if self.request.path.endswith("/"):
+                    mangled = self.request.path.rstrip("/")
+                else:
+                    mangled = self.request.path + "/"
+                resource = model.Resource.all().filter("path = ", mangled).get()
+                if resource:
+                    # resource paths are cannonical, so redirect
+                    return redirect(self.response, resource.path)
+                
                 return not_found(self.response)
             
             if send_json:
@@ -255,7 +265,11 @@ def not_found(response):
     response.set_status(404)
     response.out.write(template.render(path, {} ))
 
-            
+def redirect(response, path):
+    response.set_status(302)
+    response.headers['Location'] = path
+
+
 application = webapp.WSGIApplication( [
     ('/__meta__/', MetadataHandler),
     ('(/.*)', ResourceHandler)
