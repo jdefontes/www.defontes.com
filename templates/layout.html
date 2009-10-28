@@ -18,11 +18,13 @@
             <h1 id="logo"><a href="/"><span class="replaced">Jason DeFontes</span></a></h1>
         </div>
         <div class="column span-9">
+	{% if resource.navigation %}
             <ul id="nav">
             {% for nav_item in resource.navigation %}
                 <li><a href="{{ nav_item.path }}">{{ nav_item.title }}</a></li>
             {% endfor %}
             </ul>
+        {% endif %}
         </div>
     </div>
     <div class="row">
@@ -38,7 +40,7 @@
 </div>
 <div class="row">
     <div class="column span-12">
-        <p class="copyright">Copyright &copy 1995-2009, Jason DeFontes. All rights reserved.</p>
+        <p class="copyright">Copyright &copy; 1995-2009, Jason DeFontes. All rights reserved.</p>
     </div>
 </div>
 
