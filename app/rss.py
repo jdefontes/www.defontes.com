@@ -53,7 +53,7 @@ class RssFeed:
         
         if pub_date is not None:
             elem = self.document.createElement("pubDate")
-            elem.appendChild(self.document.createTextNode(self.format_rfc822_date(pub_date)))
+            elem.appendChild(self.document.createTextNode(format_rfc822_date(pub_date)))
             channel.appendChild(elem)
         
         if rss_link is not None:
@@ -92,13 +92,14 @@ class RssFeed:
             
         if pub_date is not None:
             elem = self.document.createElement("pubDate")
-            elem.appendChild(self.document.createTextNode(self.format_rfc822_date(pub_date)))
+            elem.appendChild(self.document.createTextNode(format_rfc822_date(pub_date)))
             item.appendChild(elem)
         
         channel.appendChild(item)
 
-    def format_rfc822_date(self, date):
-        return formatdate(mktime(date.timetuple()))
-        
     def to_xml(self):
         return self.document.toprettyxml()
+
+def format_rfc822_date(date):
+    return formatdate(mktime(date.timetuple()))
+    
