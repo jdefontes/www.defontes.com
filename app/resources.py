@@ -222,6 +222,7 @@ class ResourceHandler(webapp.RequestHandler):
         if representation.modification_date:
             self.response.headers['Last-Modified'] = rss.format_rfc822_date(representation.modification_date)
             self.response.headers['Cache-Control'] = "max-age=" + str(self.cache_duration)
+        self.response.headers['Vary'] = "Accept"
         self.response.out.write(representation.body)
 
         
