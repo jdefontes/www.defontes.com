@@ -126,7 +126,7 @@
     });
     
     var loadTable = function(path) {
-        dataSource.sendRequest(path, {
+        dataSource.sendRequest(path + "?rnd=" + Math.random(), {
             success: function () {
                 this.onDataReturnReplaceRows.apply(this,arguments);
                 if (path != "/") {
