@@ -33,6 +33,7 @@ class Representation(object):
         self.body = body
 
 class ResourceHandler(webapp.RequestHandler):
+    cache_duration = 3600
     dateformat = "%b %d, %Y %H:%M"
     def cached_representation(self, key):
         representation = memcache.get(key)
@@ -68,9 +69,9 @@ class ResourceHandler(webapp.RequestHandler):
                 resource = model.Resource.all().filter("path = ", mangled).get()
                 if resource:
                     # resource paths are cannonical, so redirect
-                    return redirect(self.response, resource.path)
+                    return self.redirect(resource.path)
                 
-                return not_found(self.response)
+                return self.not_found()
             
             if send_json:
                 representation = self.json_representation(resource)
@@ -79,10 +80,10 @@ class ResourceHandler(webapp.RequestHandler):
                 handler_name = "handle_" + (resource.handler or resource.class_name().lower())
                 handler = ResourceHandler.__dict__[handler_name]
                 representation = handler(self, resource)
-                memcache.set(key, representation)
+                memcache.set(key, representation, self.cache_duration)
                 
         if not send_json and representation.modification_date and self.request.if_modified_since and self.request.if_modified_since.replace(microsecond=0,tzinfo=None) >= representation.modification_date.replace(microsecond=0,tzinfo=None):
-            return not_modified(self.response)
+            return self.not_modified()
         
         self.write(representation)
 
@@ -220,6 +221,7 @@ class ResourceHandler(webapp.RequestHandler):
         self.response.headers['Content-Type'] = representation.content_type
         if representation.modification_date:
             self.response.headers['Last-Modified'] = rss.format_rfc822_date(representation.modification_date)
+            self.response.headers['Cache-Control'] = "max-age=" + str(self.cache_duration)
         self.response.out.write(representation.body)
 
         
@@ -282,22 +284,23 @@ class ResourceHandler(webapp.RequestHandler):
 
         resource.put()
         self.write(self.json_representation(resource))
-    
+        
+    def not_found(self):
+        path = os.path.join(os.path.dirname(__file__), '..', 'templates', '404.html')
+        self.response.set_status(404)
+        self.response.out.write(template.render(path, {} ))
+        
+    def not_modified(self):
+        self.response.set_status(304)
+        self.response.headers['Cache-Control'] = "max-age=" + str(self.cache_duration)
+        
     def precondition_failed(self, message):
         self.error(412) # Precondition Failed
         self.response.out.write(message)
-
-def not_found(response):
-    path = os.path.join(os.path.dirname(__file__), '..', 'templates', '404.html')
-    response.set_status(404)
-    response.out.write(template.render(path, {} ))
-
-def not_modified(response):
-    response.set_status(304)
-
-def redirect(response, path):
-    response.set_status(302)
-    response.headers['Location'] = path
+        
+    def redirect(self, path):
+        self.response.set_status(302)
+        self.response.headers['Location'] = path
 
 
 application = webapp.WSGIApplication( [
