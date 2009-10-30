@@ -8,6 +8,7 @@ from app import model
 from app import rss
 from app.BeautifulSoup import BeautifulSoup
 from datetime import datetime
+from datetime import timedelta
 from google.appengine.api import images
 from google.appengine.api import memcache
 from google.appengine.api import users
@@ -35,6 +36,11 @@ class Representation(object):
 class ResourceHandler(webapp.RequestHandler):
     cache_duration = 3600
     dateformat = "%b %d, %Y %H:%M"
+    
+    def add_cache_headers(self):
+        self.response.headers['Cache-Control'] = "public, max-age=" + str(self.cache_duration)
+        self.response.headers['Expires'] = rss.format_rfc822_date(datetime.utcnow() + timedelta(seconds=self.cache_duration))
+    
     def cached_representation(self, key):
         representation = memcache.get(key)
         if representation:
@@ -221,7 +227,8 @@ class ResourceHandler(webapp.RequestHandler):
         self.response.headers['Content-Type'] = representation.content_type
         if representation.modification_date:
             self.response.headers['Last-Modified'] = rss.format_rfc822_date(representation.modification_date)
-            self.response.headers['Cache-Control'] = "max-age=" + str(self.cache_duration)
+            self.add_cache_headers()
+            
         self.response.headers['Vary'] = "Accept"
         self.response.out.write(representation.body)
 
@@ -293,7 +300,7 @@ class ResourceHandler(webapp.RequestHandler):
         
     def not_modified(self):
         self.response.set_status(304)
-        self.response.headers['Cache-Control'] = "max-age=" + str(self.cache_duration)
+        self.add_cache_headers()
         
     def precondition_failed(self, message):
         self.error(412) # Precondition Failed

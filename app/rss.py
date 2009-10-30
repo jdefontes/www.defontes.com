@@ -101,5 +101,5 @@ class RssFeed:
         return self.document.toprettyxml()
 
 def format_rfc822_date(date):
-    return formatdate(mktime(date.timetuple()))
+    return formatdate(mktime(date.timetuple())).replace("-0000", "GMT")
     
