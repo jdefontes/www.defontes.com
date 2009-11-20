@@ -131,7 +131,9 @@ class ResourceHandler(webapp.RequestHandler):
             # fix links to local URLs in body
             soup = BeautifulSoup(body, fromEncoding='utf-8')
             for link in soup.findAll('a', href=re.compile('^\/.*')):
-            	link['href'] = self.request.host_url + link['href']
+                link['href'] = self.request.host_url + link['href']
+            for img in soup.findAll('img', src=re.compile('^\/.*')):
+                img['src'] = self.request.host_url + img['src']
             feed.add_item(
                 title = c.title,
                 description = unicode(soup),
