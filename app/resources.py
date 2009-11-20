@@ -1,3 +1,4 @@
+import hashlib
 import logging
 import mimetypes
 import os
@@ -28,10 +29,11 @@ class MetadataHandler(webapp.RequestHandler):
         self.response.out.write(json.dumps(meta))
 
 class Representation(object):
-    def __init__(self, content_type, modification_date, body):
+    def __init__(self, content_type, body, cacheable):
         self.content_type = content_type
-        self.modification_date = modification_date
         self.body = body
+        self.cacheable = cacheable
+        self.etag = hashlib.md5(self.body).hexdigest()
 
 class ResourceHandler(webapp.RequestHandler):
     cache_duration = 3600
@@ -57,11 +59,8 @@ class ResourceHandler(webapp.RequestHandler):
         accept = (self.request.headers.has_key('Accept') and self.request.headers['Accept'] or "")
         send_json = accept.find("json") > -1
         
-        representation = None
         key = self.request.path_qs
-        
-        if not send_json:
-            representation = self.cached_representation(key)
+        representation = self.cached_representation(key)
             
         if not representation:
             resource = model.Resource.all().filter("path = ", self.request.path).get()
@@ -86,27 +85,24 @@ class ResourceHandler(webapp.RequestHandler):
                 handler_name = "handle_" + (resource.handler or resource.class_name().lower())
                 handler = ResourceHandler.__dict__[handler_name]
                 representation = handler(self, resource)
+                
+            if representation.cacheable:
                 memcache.set(key, representation, self.cache_duration)
                 
-        if not send_json and representation.modification_date and self.request.if_modified_since and self.request.if_modified_since.replace(microsecond=0,tzinfo=None) >= representation.modification_date.replace(microsecond=0,tzinfo=None):
+        if representation.etag in self.request.if_none_match:
             return self.not_modified()
-        
+            
         self.write(representation)
 
     def handle_article(self, resource):
-        return self.template_representation(resource, None, resource.modification_date)
+        return self.template_representation(resource, None)
     
     def handle_artwork(self, resource):
-        return self.template_representation(resource, None, resource.modification_date)
+        return self.template_representation(resource, None)
     
     def handle_blog(self, resource):
         posts = model.Article.all().order("-publication_date").fetch(1000)
-        last_modified = resource.modification_date
-        for p in posts:
-            if p.modification_date > last_modified:
-                last_modified = p.modification_date
-        
-        return self.template_representation(resource, posts, last_modified)
+        return self.template_representation(resource, posts)
     
     def handle_feed(self, resource):
         # TODO - model attribute for item count?
@@ -144,40 +140,28 @@ class ResourceHandler(webapp.RequestHandler):
                 pub_date = c.publication_date
             )
         
-        return Representation("application/rss+xml", last_modified, feed.to_xml())
+        return Representation("application/rss+xml", feed.to_xml(), True)
     
     def handle_folder(self, resource):
         children =  resource.child_resources
-        last_modified = resource.modification_date
-        for c in children:
-            if c.modification_date > last_modified:
-                last_modified = c.modification_date
-        return self.template_representation(resource, children, last_modified)
+        return self.template_representation(resource, children)
     
     # sample custom handler
     def handle_home(self, resource):
         posts = model.Article.all().order("-publication_date").fetch(5)
-        last_modified = resource.modification_date
-        for p in posts:
-            if p.modification_date > last_modified:
-                last_modified = p.modification_date
-        return self.template_representation(resource, posts, last_modified)
+        return self.template_representation(resource, posts)
     
     def handle_image(self, resource):
         if self.request.get("w", None) != None and self.request.get("h", None) != None:
             image = images.Image(resource.image_blob)
             image.resize(width=int(self.request.get("w")), height=int(self.request.get("h")))
-            return Representation("image/jpeg", resource.modification_date, image.execute_transforms(output_encoding=images.JPEG))
+            return Representation("image/jpeg", image.execute_transforms(output_encoding=images.JPEG), True)
         else:
-            return Representation(resource.mime_type, resource.modification_date, resource.image_blob)
+            return Representation(resource.mime_type, resource.image_blob, True)
 
     def handle_tag(self, resource):
         children = model.Resource.all().filter("tags = ", resource.title)
-        last_modified = resource.modification_date
-        for c in children:
-            if c.modification_date > last_modified:
-                last_modified = c.modification_date
-        return self.template_representation(resource, children, last_modified)
+        return self.template_representation(resource, children)
     
     def json_representation(self, resource):
         result = {
@@ -209,27 +193,27 @@ class ResourceHandler(webapp.RequestHandler):
         
         # browsers don't like the proper mime type: http://simonwillison.net/2009/Feb/6/json/
         # and also a workaround for this: http://tech.groups.yahoo.com/group/ydn-javascript/message/29416
-        return Representation("text/html", None, json.dumps(result))
+        return Representation("text/html", json.dumps(result), False)
     
     def render_template(self, template_name, template_values):
         path = os.path.join(os.path.dirname(__file__), '..', 'templates', template_name )
         return template.render(path, template_values)
     
-    def template_representation(self, resource, children, modification_date):
+    def template_representation(self, resource, children):
         template_values = {
             "resource": resource,
             "children": children
         }
         template_name = resource.template or resource.class_name().lower() + ".html"
-        return Representation("text/html", modification_date, self.render_template(template_name, template_values))
+        return Representation("text/html", self.render_template(template_name, template_values), True)
     
     def write(self, representation):
         self.response.headers['Content-Type'] = representation.content_type
-        if representation.modification_date:
-            self.response.headers['Last-Modified'] = rss.format_rfc822_date(representation.modification_date)
+        if representation.cacheable:
             self.add_cache_headers()
-            
+        self.response.headers['ETag'] = representation.etag
         self.response.headers['Vary'] = "Accept"
+        self.response.headers['X-Inspired-By'] = "Kittens!"
         self.response.out.write(representation.body)
 
         
