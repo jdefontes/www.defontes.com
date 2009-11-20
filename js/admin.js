@@ -102,6 +102,9 @@
         if (resource.class_name == "Image" && resource.path != dataTable.currentPath) {
             thumb.src = resource.path + "?w=128&h=128";
             YAHOO.util.Dom.setStyle(thumb, 'display', 'block');
+        } else if (resource.class_name == "Artwork" && resource.path != dataTable.currentPath) {
+            thumb.src = resource.image_path + "?w=128&h=128";
+            YAHOO.util.Dom.setStyle(thumb, 'display', 'block');
         } else {
             thumb.src = null;
             YAHOO.util.Dom.setStyle(thumb, 'display', 'none');
