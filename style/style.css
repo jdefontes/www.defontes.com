@@ -1,4 +1,4 @@
-﻿/* colors */
+/* colors */
 a {
     color: #2F8FBF;
     text-decoration: none;
@@ -263,14 +263,12 @@ div.artwork div.image img {
 }
 
 /* footer */
-#icon {
-    margin-top: 40px;
-    height: 16px;
-    background: url(favicon.png) no-repeat top left;
-    opacity: 0.2;
-}
 .copyright {
+    background: url(favicon.png) no-repeat 0 50%;
     font-size: 85%;
     color: #999;
-    margin: 20px 0 40px 0;
+    line-height: 20px;
+    margin: 20px auto 40px auto;
+    padding-left: 24px;
+    width: 970px;
 }
