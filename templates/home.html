@@ -8,7 +8,7 @@
     </div>
 </div>
 <div class="row">
-    <div class="column span-7">
+    <div class="column span-8">
         {% for child in children %}
             <div class="post">
                 <h2><a href="{{ child.path }}">{{ child.title }}</a></h2>
@@ -22,7 +22,7 @@
             &nbsp;
         {% endif %}
     </div>
-    <div class="column span-5">
+    <div class="column span-4">
         <div id="right">{{resource.body_extended|default:"&nbsp;"}}</div>
     </div>
 </div>
