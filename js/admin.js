@@ -1,4 +1,4 @@
-﻿YAHOO.util.Event.onDOMReady (function() {
+YAHOO.util.Event.onDOMReady (function() {
 
     YAHOO.util.Connect.initHeader("Accept", "application/json", true);
         
@@ -15,7 +15,7 @@
                     onclick: {
                         fn: function (eventType, event, obj) {
                             obj.path = dataTable.currentPath;
-                            bindForm(obj);
+                            bindForm(obj, true);
                         },
                         obj: resource
                     }
@@ -85,14 +85,32 @@
         });
     };
     
-    var bindForm = function(resource) {
+    var formatDate = function(date) {
+    	var formatted = [];
+    	formatted.push([ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ][date.getUTCMonth()]);
+    	formatted.push(" ");
+    	formatted.push(now.getUTCDate());
+    	formatted.push(", ");
+    	formatted.push(now.getUTCFullYear());
+    	formatted.push(" ");
+    	formatted.push(now.getUTCHours());
+    	formatted.push(":");
+    	formatted.push(now.getUTCMinutes());
+    	return formatted.join();
+    };
+    
+    var bindForm = function(resource, isNew) {
         var form = YAHOO.util.Dom.get('edit');
         var inputs = YAHOO.util.Selector.query('input, textarea', form);
         YAHOO.util.Dom.batch(inputs, function (el) {
             var wrap = YAHOO.util.Dom.getAncestorByTagName(el, 'div');
             if (resource.hasOwnProperty(el.id)) {
                 YAHOO.util.Dom.setStyle(wrap, 'display', 'block');
-                el.value = resource[el.id];
+                if (isNew && el.id == "publication_date") {
+                	el.value = formatDate(new Date());
+                } else {
+                	el.value = resource[el.id];
+                }
             } else {
                 YAHOO.util.Dom.setStyle(wrap, 'display', 'none');
                 el.value = null;
