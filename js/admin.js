@@ -89,14 +89,14 @@ YAHOO.util.Event.onDOMReady (function() {
     	var formatted = [];
     	formatted.push([ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ][date.getUTCMonth()]);
     	formatted.push(" ");
-    	formatted.push(now.getUTCDate());
+    	formatted.push(date.getUTCDate());
     	formatted.push(", ");
-    	formatted.push(now.getUTCFullYear());
+    	formatted.push(date.getUTCFullYear());
     	formatted.push(" ");
-    	formatted.push(now.getUTCHours());
+    	formatted.push(date.getUTCHours());
     	formatted.push(":");
-    	formatted.push(now.getUTCMinutes());
-    	return formatted.join();
+    	formatted.push(date.getUTCMinutes());
+    	return formatted.join("");
     };
     
     var bindForm = function(resource, isNew) {
