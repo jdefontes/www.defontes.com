@@ -201,6 +201,11 @@ span.replaced {
     color: #F8B414;
     margin: 0 0 1em 0;
 }
+.title {
+    color: #999;
+    font-size: 85%;
+    margin: 0 0 3em 0;
+}
 
 /* blog */
 table.archive th, table.archive td {
