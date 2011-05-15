@@ -2,23 +2,38 @@
 
 {% block content %}
 
-{% if resource.title %}<h2>{{resource.title}}</h2>{% endif %}
+<h2>Folder{% if resource.title %}: {{resource.title}}{% endif %}</h2>
 
 {% if resource.body %}<div>{{resource.body}}</div>{% endif %}
 
+{% if resource.parent_path %}<div><a href="{{ resource.parent_path }}">&laquo; back to parent folder</a></div>{% endif %}
+
 {% if children %}
 <table>
+	<tr>
+		<th>Icon</th>
+		<th>Type</th>
+		<th>Title</th>
+		<th>Path</th>
+		<th>Date</th>
+	</tr>
     {% for child in children %}
     <tr>
         <td style="text-align: center;">
             {% ifequal child.class_name "Image" %}
             <img src="{{ child.path }}?w=64&h=64" />
             {% else %}
-            {{ child.class_name }}
+            <img src="/style/icon_{{ child.class_name }}.gif" />
             {% endifequal %}
         </td>
         <td>
+            {{ child.class_name }}
+        </td>
+        <td>
             <a href="{{ child.path }}">{{ child.title }}</a>
+        </td>
+        <td>
+            <a href="{{ child.path }}">{{ child.path }}</a>
         </td>
         <td>
             {{ child.publication_date }}

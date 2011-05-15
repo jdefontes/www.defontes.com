@@ -78,6 +78,13 @@ class ResourceHandler(webapp.RequestHandler):
                 
                 return self.not_found()
             
+            # Now that we have a resource...
+            
+            # calculate the parent path
+            parts = resource.path.rstrip("/").rpartition("/")
+            resource.parent_path = parts[0] + parts[1]
+            
+            
             if send_json:
                 representation = self.json_representation(resource)
             else:
