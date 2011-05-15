@@ -84,7 +84,6 @@ class ResourceHandler(webapp.RequestHandler):
             parts = resource.path.rstrip("/").rpartition("/")
             resource.parent_path = parts[0] + parts[1]
             
-            
             if send_json:
                 representation = self.json_representation(resource)
             else:
@@ -114,7 +113,8 @@ class ResourceHandler(webapp.RequestHandler):
     def handle_feed(self, resource):
         # TODO - model attribute for item count?
         # TODO - model attributes for other hard-coded values?
-        children =  model.__dict__[resource.resource_type].all().order("-publication_date").fetch(10)
+        types = ",".join([ "'%s'" % t for t in resource.resource_types ])
+        children =  model.Resource.gql("WHERE class IN (" + types + ") ORDER BY publication_date DESC").fetch(10)
         last_modified = resource.modification_date
         for c in children:
             if c.modification_date > last_modified:
@@ -131,10 +131,8 @@ class ResourceHandler(webapp.RequestHandler):
         )
         
         for c in children:
-            if resource.template:
-                body = self.render_template(resource.template, { "child": c })
-            else:
-                body = c.body
+            body = self.render_template(c.class_name().lower() + "_post.html", { "child": c })
+
             # fix links to local URLs in body
             soup = BeautifulSoup(body, fromEncoding='utf-8')
             for link in soup.findAll('a', href=re.compile('^\/.*')):
@@ -157,7 +155,8 @@ class ResourceHandler(webapp.RequestHandler):
     
     # sample custom handler
     def handle_home(self, resource):
-        posts = model.Article.all().order("-publication_date").fetch(5)
+        #posts = model.Article.all().order("-publication_date").fetch(5)
+        posts = model.Resource.gql("WHERE class IN ('Article', 'Artwork') ORDER BY publication_date DESC").fetch(5)
         return self.template_representation(resource, posts)
     
     def handle_image(self, resource):
@@ -169,7 +168,7 @@ class ResourceHandler(webapp.RequestHandler):
             return Representation(resource.mime_type, resource.image_blob, True)
 
     def handle_tag(self, resource):
-        children = model.Resource.all().filter("tags = ", resource.title)
+        children = model.Resource.all().filter("tag_keys = ", resource.key())
         return self.template_representation(resource, children)
     
     def json_representation(self, resource):
@@ -181,7 +180,7 @@ class ResourceHandler(webapp.RequestHandler):
             "publication_date": (resource.publication_date and resource.publication_date.strftime(self.dateformat) or None)
         }
     
-        ignore = [ "_class", "author", "creation_date", "modification_date", "parent_resource", "publication_date" ]
+        ignore = [ "_class", "author", "creation_date", "modification_date", "parent_resource", "publication_date", "tag_keys" ]
         properties = [ p for p in resource.properties() if p not in ignore ]
         for p in properties:
             result[p] = getattr(resource, p)
@@ -189,6 +188,9 @@ class ResourceHandler(webapp.RequestHandler):
         if resource.class_name() == "Image":
             result["image_blob"] = None
         
+        if "tag_keys" in resource.properties():
+            result["tag_keys"] = ",".join([ t.title for t in resource.tags ])
+            
         if resource.child_resources:
             result['child_resources'] = [ {
                 "class_name": c.class_name(),
@@ -266,20 +268,15 @@ class ResourceHandler(webapp.RequestHandler):
                     setattr(resource, p, (value and int(value)) or None)
                 elif p == "publication_date":
                     setattr(resource, p, (value and datetime.strptime(value, self.dateformat) or None))
-                elif p == "tags":
-                    old_tags = resource.tags
-                    new_tags = [ name.strip() for name in value.split(',') if name.strip() != "" ]
-                    tags = set(old_tags + new_tags)
-                    for name in tags:
-                        tag = model.Tag.all().filter("title = ", name).get()
-                        if tag == None:
-                            return self.precondition_failed("tag " + name + " not found")
-                        if name in new_tags and name not in old_tags:
-                            tag.item_count = tag.item_count + 1
-                        elif name in old_tags and name not in new_tags:
-                            tag.item_count = tag.item_count - 1
-                        tag.put()
-                    setattr(resource, p, new_tags)
+                elif p == "resource_types":
+                    setattr(resource, p, [ t.strip() for t in value.split(",") if t.strip() != ""  ])
+                elif p == "tag_keys":
+                    titles = ",".join([ "'%s'" % name.strip() for name in value.split(',') if name.strip() != "" ])
+                    if titles:
+                    	tags = model.Tag.gql("WHERE title IN (" + titles + ")").fetch(1000)
+                    	setattr(resource, p, [ t.key() for t in tags ])
+                    else:
+                    	setattr(resource, p, None)
                 else:
                     setattr(resource, p, value)
 

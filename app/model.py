@@ -3,6 +3,7 @@ from google.appengine.ext.db import polymodel
 
 class Resource(polymodel.PolyModel):
     parent_resource = db.SelfReferenceProperty(collection_name="child_resources")
+    body = db.TextProperty()
     author = db.UserProperty()
     handler = db.StringProperty()
     main_navigation = db.IntegerProperty()
@@ -13,27 +14,26 @@ class Resource(polymodel.PolyModel):
     publication_date = db.DateTimeProperty()
 
 class Article(Resource):
-    body = db.TextProperty()
     body_extended = db.TextProperty()
-    tags = db.StringListProperty()
+    tag_keys = db.ListProperty(db.Key)
     template = db.StringProperty()
 
 class Artwork(Resource):
-    body = db.TextProperty()
+    def get_tags(self):
+        return Tag.get(self.tag_keys)
     dimensions = db.StringProperty()
     image_path = db.StringProperty()
     media = db.StringProperty()
-    tags = db.StringListProperty()
+    tag_keys = db.ListProperty(db.Key)
+    tags = property(get_tags)
     template = db.StringProperty()
     year = db.StringProperty()
 
 class Feed(Resource):
-    body = db.TextProperty()
     template = db.StringProperty()
-    resource_type = db.StringProperty()
+    resource_types = db.StringListProperty()
 
 class Folder(Resource):
-    body = db.TextProperty()
     body_extended = db.TextProperty()
     template = db.StringProperty()
 
@@ -44,5 +44,4 @@ class Image(Resource):
     height = db.IntegerProperty()
 
 class Tag(Resource):
-    item_count = db.IntegerProperty(default=0)
     template = db.StringProperty()
