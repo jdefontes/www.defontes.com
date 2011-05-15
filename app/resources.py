@@ -276,7 +276,7 @@ class ResourceHandler(webapp.RequestHandler):
                     	tags = model.Tag.gql("WHERE title IN (" + titles + ")").fetch(1000)
                     	setattr(resource, p, [ t.key() for t in tags ])
                     else:
-                    	setattr(resource, p, None)
+                    	setattr(resource, p, [])
                 else:
                     setattr(resource, p, value)
 

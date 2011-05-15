@@ -14,6 +14,9 @@ class Resource(polymodel.PolyModel):
     publication_date = db.DateTimeProperty()
 
 class Article(Resource):
+    def get_tags(self):
+        return Tag.get(self.tag_keys)
+    tags = property(get_tags)
     body_extended = db.TextProperty()
     tag_keys = db.ListProperty(db.Key)
     template = db.StringProperty()
@@ -21,11 +24,11 @@ class Article(Resource):
 class Artwork(Resource):
     def get_tags(self):
         return Tag.get(self.tag_keys)
+    tags = property(get_tags)
     dimensions = db.StringProperty()
     image_path = db.StringProperty()
     media = db.StringProperty()
     tag_keys = db.ListProperty(db.Key)
-    tags = property(get_tags)
     template = db.StringProperty()
     year = db.StringProperty()
 
