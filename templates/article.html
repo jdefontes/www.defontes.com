@@ -5,8 +5,8 @@
 {% if resource.title %}<h2>{{resource.title}}</h2>{% endif %}
 
 <div>
-{% if resource.body %}{{resource.body}}{% endif %}
-{% if resource.body_extended %}{{resource.body_extended}}{% endif %}
+{% if resource.body %}{{resource.body|safe}}{% endif %}
+{% if resource.body_extended %}{{resource.body_extended|safe}}{% endif %}
 </div>
 <div class="date">{{ resource.publication_date|date:"Y.m.d P T" }}</div>
 

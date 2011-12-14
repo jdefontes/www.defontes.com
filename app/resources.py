@@ -298,7 +298,7 @@ class ResourceHandler(webapp.RequestHandler):
         
     def redirect(self, path):
         self.response.set_status(302)
-        self.response.headers['Location'] = path
+        self.response.headers['Location'] = str(path)
 
 
 application = webapp.WSGIApplication( [
@@ -306,9 +306,4 @@ application = webapp.WSGIApplication( [
     ('(/.*)', ResourceHandler)
 ], debug=True)
 
-def main():
-    run_wsgi_app(application)
-
-if __name__ == "__main__":
-    main()
 

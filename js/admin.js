@@ -93,9 +93,11 @@ YAHOO.util.Event.onDOMReady (function() {
     	formatted.push(", ");
     	formatted.push(date.getUTCFullYear());
     	formatted.push(" ");
-    	formatted.push(date.getUTCHours());
+		var hours = date.getUTCHours()
+    	formatted.push(hours < 10 ? "0" + hours : hours);
     	formatted.push(":");
-    	formatted.push(date.getUTCMinutes());
+		var minutes = date.getUTCMinutes()
+    	formatted.push(minutes < 10 ? "0" + minutes : minutes);
     	return formatted.join("");
     };
     

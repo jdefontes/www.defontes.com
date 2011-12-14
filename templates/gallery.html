@@ -3,7 +3,7 @@
 {% block content %}
 
 <h2>{{resource.title}}</h2>
-<div>{{resource.body}}</div>
+<div>{{resource.body|safe}}</div>
 
 <div class="row">
     {% for child in children %}

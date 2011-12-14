@@ -5,7 +5,7 @@
 {% block content %}
 
 <h2>Items Tagged '{{resource.title}}'</h2>
-<div>{{resource.body}}</div>
+<div>{{resource.body|safe}}</div>
 
 
 {% for child in children %}

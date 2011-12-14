@@ -4,7 +4,7 @@
 
 <h2>Folder{% if resource.title %}: {{resource.title}}{% endif %}</h2>
 
-{% if resource.body %}<div>{{resource.body}}</div>{% endif %}
+{% if resource.body %}<div>{{resource.body|safe}}</div>{% endif %}
 
 {% if resource.parent_path %}<div><a href="{{ resource.parent_path }}">&laquo; back to parent folder</a></div>{% endif %}
 
