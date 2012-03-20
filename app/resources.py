@@ -1,9 +1,11 @@
 import hashlib
+import jinja2
+import json
 import logging
 import mimetypes
 import os
 import re
-from django.utils import simplejson as json
+import webapp2
 
 from app import model
 from app import rss
@@ -14,11 +16,12 @@ from google.appengine.api import images
 from google.appengine.api import memcache
 from google.appengine.api import users
 from google.appengine.ext import db
-from google.appengine.ext import webapp
-from google.appengine.ext.webapp import template
-from google.appengine.ext.webapp.util import run_wsgi_app
 
-class MetadataHandler(webapp.RequestHandler):
+
+jinja_environment = jinja2.Environment(
+    loader=jinja2.FileSystemLoader(os.path.join(os.path.dirname(__file__), '..', 'templates')))
+    
+class MetadataHandler(webapp2.RequestHandler):
     def get(self):
         resources = [ model.Artwork(), model.Article(), model.Feed(), model.Folder(), model.Image(), model.Tag() ]
         hide = [ "_class", "parent_resource" ]
@@ -35,7 +38,7 @@ class Representation(object):
         self.cacheable = cacheable
         self.etag = hashlib.md5(self.body).hexdigest()
 
-class ResourceHandler(webapp.RequestHandler):
+class ResourceHandler(webapp2.RequestHandler):
     cache_duration = 3600
     dateformat = "%b %d, %Y %H:%M"
     
@@ -207,8 +210,9 @@ class ResourceHandler(webapp.RequestHandler):
         return Representation("text/html", json.dumps(result), False)
     
     def render_template(self, template_name, template_values):
-        path = os.path.join(os.path.dirname(__file__), '..', 'templates', template_name )
-        return template.render(path, template_values)
+        #path = os.path.join(os.path.dirname(__file__), '..', 'templates', template_name )
+        template = jinja_environment.get_template(template_name)
+        return template.render(template_values)
     
     def template_representation(self, resource, children):
         template_values = {
@@ -284,9 +288,9 @@ class ResourceHandler(webapp.RequestHandler):
         self.write(self.json_representation(resource))
         
     def not_found(self):
-        path = os.path.join(os.path.dirname(__file__), '..', 'templates', '404.html')
+        template = jinja_environment.get_template('404.html')
         self.response.set_status(404)
-        self.response.out.write(template.render(path, {} ))
+        self.response.out.write(template.render({"resource": None}))
         
     def not_modified(self):
         self.response.set_status(304)
@@ -301,14 +305,9 @@ class ResourceHandler(webapp.RequestHandler):
         self.response.headers['Location'] = str(path)
 
 
-application = webapp.WSGIApplication( [
+app = webapp2.WSGIApplication( [
     ('/__meta__/', MetadataHandler),
     ('(/.*)', ResourceHandler)
 ], debug=True)
 
-def main():
-    run_wsgi_app(application)
-
-if __name__ == "__main__":
-    main()
 

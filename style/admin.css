@@ -27,7 +27,7 @@ label {
     padding: 6px 0;
     float:left;
 }
-input, textarea {
+input, select, textarea {
     float:left;
     font-size:14px;
     padding:4px 2px;

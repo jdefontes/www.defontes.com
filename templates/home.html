@@ -4,7 +4,7 @@
 
 <div class="row">
     <div class="column span-12">
-        <div>{{resource.body|default:"&nbsp;"}}</div>
+        <div>{{resource.body|default("&nbsp;")}}</div>
     </div>
 </div>
 <div class="row">
@@ -12,14 +12,14 @@
         {% for child in children %}
             <div class="post">
                 <h2><a href="{{ child.path }}">{{ child.title }}</a></h2>
-                {% ifequal child.class_name "Article" %}{% include "article_post.html" %}{% endifequal %}
-                {% ifequal child.class_name "Artwork" %}{% include "artwork_post.html" %}{% endifequal %}
+                {% if child.class_name == "Article" %}{% include "article_post.html" %}{% endif %}
+                {% if child.class_name == "Artwork" %}{% include "artwork_post.html" %}{% endif %}
                 <div class="date">
-                	Posted {{ child.publication_date|date:"Y.m.d P T" }}
+                	Posted {{ child.publication_date|format("Y.m.d P T") }}
                 	{% if child.tags %}
                 		in:
-                		{% for tag in child.tags %}{% ifnotequal forloop.counter 1 %},
-                		{% endifnotequal %}<a href="{{ tag.path }}">{{ tag.title }}</a>{% endfor %}.
+                		{% for tag in child.tags %}{% if forloop.counter != 1 %},
+                		{% endif %}<a href="{{ tag.path }}">{{ tag.title }}</a>{% endfor %}.
                 	{% endif %}
                 </div>
             </div>
@@ -31,7 +31,7 @@
         {% endif %}
     </div>
     <div class="column span-4">
-        <div id="right">{{resource.body_extended|default:"&nbsp;"}}</div>
+        <div id="right">{{resource.body_extended|default("&nbsp;")}}</div>
     </div>
 </div>
 

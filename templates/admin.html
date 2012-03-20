@@ -50,7 +50,12 @@
             <input type="text" id="path" name="path" /></div>
 
             <div><label>Template</label>
-            <input type="text" id="template" name="template" /></div>
+            <select id="template" name="template" />
+                <option value="">-- default --</option>
+            {% for template in templates %}
+                <option value="{{ template }}">{{ template }}</option>
+            {% endfor %}
+            </select></div>
 
             <div><label>Title</label>
             <input type="text" id="title" name="title" /></div>

@@ -20,11 +20,11 @@
     {% for child in children %}
     <tr>
         <td style="text-align: center;">
-            {% ifequal child.class_name "Image" %}
+            {% if child.class_name == "Image" %}
             <img src="{{ child.path }}?w=64&h=64" />
             {% else %}
             <img src="/style/icon_{{ child.class_name }}.gif" />
-            {% endifequal %}
+            {% endif %}
         </td>
         <td>
             {{ child.class_name }}

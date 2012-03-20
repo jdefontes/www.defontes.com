@@ -103,7 +103,7 @@ YAHOO.util.Event.onDOMReady (function() {
     
     var bindForm = function(resource, isNew) {
         var form = YAHOO.util.Dom.get('edit');
-        var inputs = YAHOO.util.Selector.query('input, textarea', form);
+        var inputs = YAHOO.util.Selector.query('input, textarea, select', form);
         YAHOO.util.Dom.batch(inputs, function (el) {
             var wrap = YAHOO.util.Dom.getAncestorByTagName(el, 'div');
             if (resource.hasOwnProperty(el.id)) {
@@ -111,7 +111,7 @@ YAHOO.util.Event.onDOMReady (function() {
                 if (isNew && el.id == "publication_date") {
                 	el.value = formatDate(new Date());
                 } else {
-                	el.value = resource[el.id];
+                	el.value = resource[el.id] || "";
                 }
             } else {
                 YAHOO.util.Dom.setStyle(wrap, 'display', 'none');

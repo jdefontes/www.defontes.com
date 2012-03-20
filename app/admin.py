@@ -1,16 +1,17 @@
 import datetime
+import jinja2
 import os
+import webapp2
 
 from app import model
 from google.appengine.api import memcache
 from google.appengine.api import users
 from google.appengine.ext import db
-from google.appengine.ext import webapp
-from google.appengine.ext.webapp import template
-from google.appengine.ext.webapp.util import run_wsgi_app
 
+jinja_environment = jinja2.Environment(
+    loader=jinja2.FileSystemLoader(os.path.join(os.path.dirname(__file__), '..', 'templates')))
 
-class MainPage(webapp.RequestHandler):
+class MainPage(webapp2.RequestHandler):
     def get(self):
         # make sure we have a root resource
         root = model.Folder.all().filter("path =", "/").get()
@@ -21,21 +22,15 @@ class MainPage(webapp.RequestHandler):
             root.publication_date = datetime.datetime.now()
             root.put()
         
-        path = os.path.join(os.path.dirname(__file__), '..', 'templates', 'admin.html')
-        self.response.out.write(template.render(path, { "resource": { "title": "Admin" } }))
+        #path = os.path.join(os.path.dirname(__file__), '..', 'templates', 'admin.html')
+        template = jinja_environment.get_template('admin.html')
+        self.response.out.write(template.render({ "resource": { "title": "Admin" }, "templates": jinja_environment.list_templates() }))
     
     # HACK - sticking this here for now because I can
     def post(self):
         memcache.flush_all()
         self.response.out.write("flushed")
 
-application = webapp.WSGIApplication( [
+app = webapp2.WSGIApplication( [
     ('/admin/', MainPage)
 ], debug=True)
-
-def main():
-    run_wsgi_app(application)
-
-if __name__ == "__main__":
-    main()
-
