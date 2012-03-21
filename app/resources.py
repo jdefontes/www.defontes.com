@@ -275,10 +275,10 @@ class ResourceHandler(webapp2.RequestHandler):
                 elif p == "tag_keys":
                     titles = ",".join([ "'%s'" % name.strip() for name in value.split(',') if name.strip() != "" ])
                     if titles:
-                    	tags = model.Tag.gql("WHERE title IN (" + titles + ")").fetch(1000)
-                    	setattr(resource, p, [ t.key() for t in tags ])
+                        tags = model.Tag.gql("WHERE title IN (" + titles + ")").fetch(1000)
+                        setattr(resource, p, [ t.key() for t in tags ])
                     else:
-                    	setattr(resource, p, [])
+                        setattr(resource, p, [])
                 else:
                     setattr(resource, p, value)
 
