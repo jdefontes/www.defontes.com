@@ -9,22 +9,22 @@
 
 
 {% for child in children %}
-	{% ifequal child.class_name "Artwork" %}
-	<div>
-		<a class="thumb" href="{{ child.path }}">
-			<div class="image"><div><img src="{{ child.image_path }}?w=200&amp;h=200" alt="{{ child.title }}" /></div></div>
-			<div class="title"><span>{{ child.title }},</span> {{ child.year }}, {{ child.media }}</div>
-		</a>
-	</div>
-	{% endifequal %}
+    {% ifequal child.class_name "Artwork" %}
+    <div>
+        <a class="thumb" href="{{ child.path }}">
+            <div class="image"><div><img src="{{ child.image_path }}?w=200&amp;h=200" alt="{{ child.title }}" /></div></div>
+            <div class="title"><span>{{ child.title }},</span> {{ child.year }}, {{ child.media }}</div>
+        </a>
+    </div>
+    {% endifequal %}
 {% endfor %}
 
 {% for child in children %}
-	{% ifequal child.class_name "Article" %}
-	<div>
-		<a href="{{ child.path }}">{{ child.title }}</a>
-	</div>
-	{% endifequal %}
+    {% ifequal child.class_name "Article" %}
+    <div>
+        <a href="{{ child.path }}">{{ child.title }}</a>
+    </div>
+    {% endifequal %}
 {% endfor %}
 
 {% endblock %}

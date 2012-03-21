@@ -30,7 +30,7 @@ handlers:
   script: app.resources.app
 
 libraries:
-- name: jinja2
+- name: django
   version: latest
   
 skip_files:

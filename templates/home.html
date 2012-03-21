@@ -4,7 +4,7 @@
 
 <div class="row">
     <div class="column span-12">
-        <div>{{resource.body|default("&nbsp;")}}</div>
+        <div>{{resource.body|default:"&nbsp;"}}</div>
     </div>
 </div>
 <div class="row">
@@ -15,12 +15,12 @@
                 {% if child.class_name == "Article" %}{% include "article_post.html" %}{% endif %}
                 {% if child.class_name == "Artwork" %}{% include "artwork_post.html" %}{% endif %}
                 <div class="date">
-                	Posted {{ child.publication_date|format("Y.m.d P T") }}
-                	{% if child.tags %}
-                		in:
-                		{% for tag in child.tags %}{% if forloop.counter != 1 %},
-                		{% endif %}<a href="{{ tag.path }}">{{ tag.title }}</a>{% endfor %}.
-                	{% endif %}
+                    Posted {{ child.publication_date|date:"Y.m.d P T" }}
+                    {% if child.tags %}
+                        in:
+                        {% for tag in child.tags %}{% if forloop.counter != 1 %},
+                        {% endif %}<a href="{{ tag.path }}">{{ tag.title }}</a>{% endfor %}.
+                    {% endif %}
                 </div>
             </div>
         {% endfor %}
@@ -31,7 +31,7 @@
         {% endif %}
     </div>
     <div class="column span-4">
-        <div id="right">{{resource.body_extended|default("&nbsp;")}}</div>
+        <div id="right">{{resource.body_extended|default:"&nbsp;"}}</div>
     </div>
 </div>
 

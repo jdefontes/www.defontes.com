@@ -1,5 +1,4 @@
 import hashlib
-import jinja2
 import json
 import logging
 import mimetypes
@@ -12,15 +11,12 @@ from app import rss
 from app.BeautifulSoup import BeautifulSoup
 from datetime import datetime
 from datetime import timedelta
+from django.template.loader import render_to_string
 from google.appengine.api import images
 from google.appengine.api import memcache
 from google.appengine.api import users
 from google.appengine.ext import db
 
-
-jinja_environment = jinja2.Environment(
-    loader=jinja2.FileSystemLoader(os.path.join(os.path.dirname(__file__), '..', 'templates')))
-    
 class MetadataHandler(webapp2.RequestHandler):
     def get(self):
         resources = [ model.Artwork(), model.Article(), model.Feed(), model.Folder(), model.Image(), model.Tag() ]
@@ -33,7 +29,7 @@ class MetadataHandler(webapp2.RequestHandler):
 
 class Representation(object):
     def __init__(self, content_type, body, cacheable):
-        self.content_type = content_type
+        self.content_type = str(content_type)
         self.body = body
         self.cacheable = cacheable
         self.etag = hashlib.md5(self.body).hexdigest()
@@ -42,11 +38,15 @@ class ResourceHandler(webapp2.RequestHandler):
     cache_duration = 3600
     dateformat = "%b %d, %Y %H:%M"
     
+    def __init__(self, request, response):
+        self.initialize(request, response)
+        os.environ["DJANGO_SETTINGS_MODULE"] = "settings"
+        
     def add_cache_headers(self):
         self.response.headers['Cache-Control'] = "public, max-age=" + str(self.cache_duration)
         self.response.headers['Expires'] = rss.format_rfc822_date(datetime.utcnow() + timedelta(seconds=self.cache_duration))
     
-    def cached_representation(self, key):
+    def cached_representation(self, key):         
         representation = memcache.get(key)
         if representation:
             logging.info("HIT: " + key)
@@ -210,9 +210,7 @@ class ResourceHandler(webapp2.RequestHandler):
         return Representation("text/html", json.dumps(result), False)
     
     def render_template(self, template_name, template_values):
-        #path = os.path.join(os.path.dirname(__file__), '..', 'templates', template_name )
-        template = jinja_environment.get_template(template_name)
-        return template.render(template_values)
+        return render_to_string(template_name, template_values)
     
     def template_representation(self, resource, children):
         template_values = {
@@ -288,9 +286,8 @@ class ResourceHandler(webapp2.RequestHandler):
         self.write(self.json_representation(resource))
         
     def not_found(self):
-        template = jinja_environment.get_template('404.html')
         self.response.set_status(404)
-        self.response.out.write(template.render({"resource": None}))
+        self.response.out.write(render_to_string('404.html', {"resource": None}))
         
     def not_modified(self):
         self.response.set_status(304)

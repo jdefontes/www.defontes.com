@@ -1,4 +1,4 @@
-{% if child.body %}<div>{{ child.body }}</div>{% endif %}
-{% if child.body_extended %}
+{% if child.body %}<div>{{ child.body|safe }}</div>{% endif %}
+{% if child.body_extended|safe %}
 <div class="more"><a href="{{ child.path }}">continue reading &raquo;</a></div>
 {% endif %}

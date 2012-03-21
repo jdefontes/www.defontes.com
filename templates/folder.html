@@ -1,8 +1,10 @@
 {% extends "layout.html" %}
 
+{% block title %}{% if resource.title %}{{resource.title}}{% else %}{{resource.path}}{% endif %} - {% endblock %}
+
 {% block content %}
 
-<h2>Folder{% if resource.title %}: {{resource.title}}{% endif %}</h2>
+<h2>{% if resource.title %}{{resource.title}}{% else %}{{resource.path}}{% endif %}</h2>
 
 {% if resource.body %}<div>{{resource.body}}</div>{% endif %}
 
@@ -10,13 +12,13 @@
 
 {% if children %}
 <table>
-	<tr>
-		<th>Icon</th>
-		<th>Type</th>
-		<th>Title</th>
-		<th>Path</th>
-		<th>Date</th>
-	</tr>
+    <tr>
+        <th>Icon</th>
+        <th>Type</th>
+        <th>Title</th>
+        <th>Path</th>
+        <th>Date</th>
+    </tr>
     {% for child in children %}
     <tr>
         <td style="text-align: center;">
