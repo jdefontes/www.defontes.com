@@ -1,3 +1,4 @@
+from google.appengine.ext import blobstore
 from google.appengine.ext import db
 from google.appengine.ext.db import polymodel
 
@@ -11,7 +12,7 @@ class Resource(polymodel.PolyModel):
     title = db.StringProperty()
     creation_date = db.DateTimeProperty(auto_now_add=True)
     modification_date = db.DateTimeProperty(auto_now=True)
-    publication_date = db.DateTimeProperty()
+    publication_date = db.DateTimeProperty(auto_now_add=True)
 
 class Article(Resource):
     def get_tags(self):
@@ -41,8 +42,7 @@ class Folder(Resource):
     template = db.StringProperty()
 
 class Image(Resource):
-    image_blob = db.BlobProperty()
-    mime_type = db.StringProperty()
+    blob = blobstore.BlobReferenceProperty()
     width = db.IntegerProperty()
     height = db.IntegerProperty()
 

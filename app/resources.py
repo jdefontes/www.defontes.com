@@ -28,16 +28,58 @@ class MetadataHandler(webapp2.RequestHandler):
         self.response.out.write(json.dumps(meta))
 
 class Representation(object):
-    def __init__(self, content_type, body, cacheable):
+    def __init__(self, content_type, body, cacheable, blob_key = None):
         self.content_type = str(content_type)
-        self.body = body
         self.cacheable = cacheable
-        self.etag = hashlib.md5(self.body).hexdigest()
+        self.body = body if body else None
+        self.etag = hashlib.md5(self.body).hexdigest() if body else None
+        self.blob_key = blob_key
 
 class ResourceHandler(webapp2.RequestHandler):
     cache_duration = 3600
     dateformat = "%b %d, %Y %H:%M"
     
+    @staticmethod
+    def create_or_update_resource(class_name, path, request):
+        resource = model.Resource.all().filter("path =", path).get()
+        if resource == None:
+            if path != "/":
+                parent_path = re.match(".*/", path.rstrip("/")).group(0)
+                parents = model.Folder.all().filter("path =", parent_path).fetch(1)
+                if len(parents) == 1:
+                    parent_resource = parents[0]
+                else:
+                    return None
+                
+                resource = model.__dict__[class_name]()
+                resource.author = users.get_current_user()
+                resource.parent_resource = parent_resource
+            else:
+                return None
+
+        for p in resource.properties():
+            value = request.get(p)
+            if request.get(p, None) != None:
+                if  p == "main_navigation":
+                    setattr(resource, p, (value and int(value)) or None)
+                elif p == "publication_date":
+                    setattr(resource, p, (value and datetime.strptime(value, ResourceHandler.dateformat) or None))
+                elif p == "resource_types":
+                    setattr(resource, p, [ t.strip() for t in value.split(",") if t.strip() != ""  ])
+                elif p == "tag_keys":
+                    titles = ",".join([ "'%s'" % name.strip() for name in value.split(',') if name.strip() != "" ])
+                    if titles:
+                        tags = model.Tag.gql("WHERE title IN (" + titles + ")").fetch(1000)
+                        setattr(resource, p, [ t.key() for t in tags ])
+                    else:
+                        setattr(resource, p, [])
+                else:
+                    setattr(resource, p, value)
+        
+        
+        
+        return resource
+                    
     def __init__(self, request, response):
         self.initialize(request, response)
         os.environ["DJANGO_SETTINGS_MODULE"] = "settings"
@@ -46,7 +88,8 @@ class ResourceHandler(webapp2.RequestHandler):
         self.response.headers['Cache-Control'] = "public, max-age=" + str(self.cache_duration)
         self.response.headers['Expires'] = rss.format_rfc822_date(datetime.utcnow() + timedelta(seconds=self.cache_duration))
     
-    def cached_representation(self, key):         
+    def cached_representation(self, key):
+        if os.environ["SERVER_SOFTWARE"].startswith("Development"): return None
         representation = memcache.get(key)
         if representation:
             logging.info("HIT: " + key)
@@ -164,11 +207,17 @@ class ResourceHandler(webapp2.RequestHandler):
     
     def handle_image(self, resource):
         if self.request.get("w", None) != None and self.request.get("h", None) != None:
-            image = images.Image(resource.image_blob)
+            image = images.Image(blob_key=resource.blob.key())
             image.resize(width=int(self.request.get("w")), height=int(self.request.get("h")))
-            return Representation("image/jpeg", image.execute_transforms(output_encoding=images.JPEG), True)
+            if resource.blob.content_type == "image/jpeg":
+                content_type = "image/jpeg"
+                encoding = images.JPEG
+            else:
+                content_type = "image/png"
+                encoding = images.PNG
+            return Representation(content_type, image.execute_transforms(output_encoding=encoding), True)
         else:
-            return Representation(resource.mime_type, resource.image_blob, True)
+            return Representation(resource.blob.content_type, None, True, resource.blob.key())
 
     def handle_tag(self, resource):
         children = model.Resource.all().filter("tag_keys = ", resource.key())
@@ -183,13 +232,10 @@ class ResourceHandler(webapp2.RequestHandler):
             "publication_date": (resource.publication_date and resource.publication_date.strftime(self.dateformat) or None)
         }
     
-        ignore = [ "_class", "author", "creation_date", "modification_date", "parent_resource", "publication_date", "tag_keys" ]
+        ignore = [ "_class", "author", "creation_date", "modification_date", "parent_resource", "publication_date", "tag_keys", "blob" ]
         properties = [ p for p in resource.properties() if p not in ignore ]
         for p in properties:
             result[p] = getattr(resource, p)
-        
-        if resource.class_name() == "Image":
-            result["image_blob"] = None
         
         if "tag_keys" in resource.properties():
             result["tag_keys"] = ",".join([ t.title for t in resource.tags ])
@@ -222,12 +268,15 @@ class ResourceHandler(webapp2.RequestHandler):
     
     def write(self, representation):
         self.response.headers['Content-Type'] = representation.content_type
-        if representation.cacheable:
-            self.add_cache_headers()
-        self.response.headers['ETag'] = representation.etag
         self.response.headers['Vary'] = "Accept"
         self.response.headers['X-Inspired-By'] = "Kittens!"
-        self.response.out.write(representation.body)
+        if representation.blob_key:
+            self.response.headers['X-AppEngine-BlobKey'] = str(representation.blob_key)
+        else:
+            if representation.cacheable:
+                self.add_cache_headers()
+            self.response.headers['ETag'] = representation.etag
+            self.response.out.write(representation.body)
 
         
     # Using POST here even though PUT would be more REST-ful because
@@ -238,50 +287,11 @@ class ResourceHandler(webapp2.RequestHandler):
             self.error(401)
             return
         
-        resource = model.Resource.all().filter("path =", path).get()
-        if resource == None:
-            if path != "/":
-                parent_path = re.match(".*/", path.rstrip("/")).group(0)
-                parents = model.Folder.all().filter("path =", parent_path).fetch(1)
-                if len(parents) == 1:
-                    parent_resource = parents[0]
-                else:
-                    return self.precondition_failed("parent folder " + parent_path + " not found")
-                
-                resource = model.__dict__[self.request.get("class_name")]()
-                resource.author = users.get_current_user()
-                resource.parent_resource = parent_resource
-            else:
-                self.error(500)
-                self.response.out.write("root resource is missing")
-                return
-
-        for p in resource.properties():
-            value = self.request.get(p)
-            if self.request.get(p, None) != None:
-                if p == "image_blob":
-                    if value != "":
-                        setattr(resource, p, db.Blob(value))
-                        resource.mime_type, encoding = mimetypes.guess_type(self.request.path)
-                        image = images.Image(resource.image_blob)
-                        resource.width = image.width
-                        resource.height = image.height
-                elif p == "main_navigation":
-                    setattr(resource, p, (value and int(value)) or None)
-                elif p == "publication_date":
-                    setattr(resource, p, (value and datetime.strptime(value, self.dateformat) or None))
-                elif p == "resource_types":
-                    setattr(resource, p, [ t.strip() for t in value.split(",") if t.strip() != ""  ])
-                elif p == "tag_keys":
-                    titles = ",".join([ "'%s'" % name.strip() for name in value.split(',') if name.strip() != "" ])
-                    if titles:
-                        tags = model.Tag.gql("WHERE title IN (" + titles + ")").fetch(1000)
-                        setattr(resource, p, [ t.key() for t in tags ])
-                    else:
-                        setattr(resource, p, [])
-                else:
-                    setattr(resource, p, value)
-
+        resource = self.create_or_update_resource(self.request.get("class_name"), path, self.request)
+        if not resource:
+            self.precondition_falied("parent folder not found for path '%s'" % path)
+            return
+            
         resource.put()
         self.write(self.json_representation(resource))
         

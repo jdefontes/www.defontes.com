@@ -30,7 +30,9 @@
         </td>
         <td>
             {{ child.class_name }}
-        </td>
+            {% if child.class_name == "Image" %}
+            <span class="small">({{ child.width }} x {{ child.height }})</span>
+            {% endif %}        </td>
         <td>
             <a href="{{ child.path }}">{{ child.title }}</a>
         </td>
