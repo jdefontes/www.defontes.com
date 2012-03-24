@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Admin </title>
+    <link rel="icon" type="image/vnd.microsoft.icon" href="/favicon.ico" />
+    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/reset-fonts-grids/reset-fonts-grids.css" />
+    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/base/base-min.css" />
+    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/button/assets/skins/sam/button.css" />
+    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/menu/assets/skins/sam/menu.css" />
+    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/datatable/assets/skins/sam/datatable.css" />
+    <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/yahoo-dom-event/yahoo-dom-event.js"></script>
+    <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/connection/connection-min.js"></script>
+    <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/json/json-min.js"></script>
+    <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/element/element-min.js"></script>
+    <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/animation/animation-min.js"></script>
+    <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/container/container_core-min.js"></script>
+    <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/menu/menu-min.js"></script>
+    <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/button/button-min.js"></script>
+    <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/datasource/datasource-min.js"></script>
+    <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/datatable/datatable-min.js"></script>
+    <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/selector/selector-min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="/style/admin.css" />
+</head>
+<body class="yui-skin-sam">
+
+<div id="doc">
+    <div id="hd"></div>
+    <div id="bd">
+
+        <div id="folder-wrap">
+            <div style="float: right; margin: 10px;"><button id="flush">Flush Cache</button></div>
+            <div id="newButton" style="float: right; margin: 10px 0;"></div>
+            <h2 id="folder"></h2>
+            <div style="clear: both;"></div>
+        </div>
+
+        <div id="grid"></div>
+
+        <form id="edit" style="display: none" enctype="multipart/form-data">
+
+            <div><label>Type</label>
+            <input type="text" id="class_name" name="class_name" /></div>
+
+            <div><label>Handler</label>
+            <input type="text" id="handler" name="handler" /></div>
+
+            <div><label>Path</label>
+            <input type="text" id="path" name="path" /></div>
+
+            <div><label>Template</label>
+            <select id="template" name="template" />
+                <option value="">-- default --</option>
+            {% for template in templates %}
+                <option value="{{ template }}">{{ template }}</option>
+            {% endfor %}
+            </select></div>
+
+            <div><label>Title</label>
+            <input type="text" id="title" name="title" /></div>
+
+            <div><label>Types</label>
+            <input type="text" id="resource_types" name="resource_types" /></div>
+
+            <div><label>Nav</label>
+            <input type="text" id="main_navigation" name="main_navigation" /></div>
+
+            <div><label>Tags</label>
+            <input type="text" id="tag_keys" name="tag_keys" /></div>
+
+            <div><label>Pub Date</label>
+            <input type="text" id="publication_date" name="publication_date" /></div>
+
+            <div><label>Year</label>
+            <input type="text" id="year" name="year" /></div>
+
+            <div><label>Media</label>
+            <input type="text" id="media" name="media" /></div>
+
+            <div><label>Dimensions</label>
+            <input type="text" id="dimensions" name="dimensions" /></div>
+
+            <div><label>Image</label>
+            <input type="text" id="image_path" name="image_path" /></div>
+
+            <div><label>Image</label>
+            <input type="file" id="image_blob" name="image_blob" /></div>
+            <div><img id="thumb" /></div>
+
+            <div><label>Body</label>
+            <textarea id="body" name="body" rows="15"></textarea></div>
+
+            <div><label>Body Ext</label>
+            <textarea id="body_extended" name="body_extended" rows="15"></textarea></div>
+
+            <div class="buttons"><button id="save">Save</button>
+            <span id="message"></span></div>
+
+        </form>
+    </div>
+    <div id="ft"></div>
+</div>
+<script type="text/javascript" src="/js/admin.js"></script>
+</body>
+</html>

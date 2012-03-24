@@ -4,6 +4,7 @@ from google.appengine.ext.db import polymodel
 
 class Resource(polymodel.PolyModel):
     parent_resource = db.SelfReferenceProperty(collection_name="child_resources")
+    uuid = db.StringProperty()
     body = db.TextProperty()
     author = db.UserProperty()
     handler = db.StringProperty()

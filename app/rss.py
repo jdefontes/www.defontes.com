@@ -64,7 +64,7 @@ class RssFeed:
         
         rss.appendChild(channel)
 
-    def add_item(self, title, description, link, author=None, pub_date=None):
+    def add_item(self, title, description, link, author=None, pub_date=None, guid=None):
         channel = self.document.firstChild.firstChild
         item = self.document.createElement("item")
         
@@ -76,10 +76,11 @@ class RssFeed:
         elem.appendChild(self.document.createTextNode(description))
         item.appendChild(elem)
         
-        elem = self.document.createElement("guid")
-        elem.setAttribute("isPermaLink", "true")
-        elem.appendChild(self.document.createTextNode(link))
-        item.appendChild(elem)
+        if guid:
+            elem = self.document.createElement("guid")
+            elem.setAttribute("isPermaLink", "false")
+            elem.appendChild(self.document.createTextNode(guid))
+            item.appendChild(elem)
         
         elem = self.document.createElement("link")
         elem.appendChild(self.document.createTextNode(link))

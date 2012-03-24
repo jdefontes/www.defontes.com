@@ -1,6 +1,7 @@
 import datetime
 import os
 import urllib
+import uuid
 import webapp2
 
 from app import model
@@ -47,18 +48,19 @@ class MainPage(webapp2.RequestHandler):
         self.initialize(request, response)
         os.environ["DJANGO_SETTINGS_MODULE"] = "settings"
         
-    def get(self):
+    def get(self, path):
         # make sure we have a root resource
         root = model.Folder.all().filter("path =", "/").get()
-        if root == None:
+        if not root:
             root = model.Folder()
             root.path = "/"
+            root.uuid = str(uuid.uuid1())
             root.author = users.get_current_user()
-            root.publication_date = datetime.datetime.now()
             root.put()
         
         templates = os.listdir(os.path.join(os.path.dirname(__file__), '..', 'templates'))
-        self.response.out.write(render_to_string('admin.html', { "resource": { "title": "Admin" }, "templates": templates }))
+        template = "admin.old.html" if path.endswith("old") else "admin.html"
+        self.response.out.write(render_to_string(template, { "resource": { "title": "Admin" }, "templates": templates }))
     
     # HACK - sticking this here for now because I can
     def post(self):
@@ -66,6 +68,6 @@ class MainPage(webapp2.RequestHandler):
         self.response.out.write("flushed")
 
 app = webapp2.WSGIApplication( [
-    ('/admin/', MainPage),
+    ('/admin/(.*)', MainPage),
     ('/admin/blob', BlobHandler)
 ], debug=True)

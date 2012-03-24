@@ -4,6 +4,7 @@ import logging
 import mimetypes
 import os
 import re
+import uuid
 import webapp2
 
 from app import model
@@ -53,6 +54,7 @@ class ResourceHandler(webapp2.RequestHandler):
                 
                 resource = model.__dict__[class_name]()
                 resource.author = users.get_current_user()
+                resource.uuid = str(uuid.uuid1())
                 resource.parent_resource = parent_resource
             else:
                 return None
@@ -190,7 +192,8 @@ class ResourceHandler(webapp2.RequestHandler):
                 description = unicode(soup),
                 link = self.request.host_url + c.path,
                 author = "jason@defontes.com (Jason DeFontes)",
-                pub_date = c.publication_date
+                pub_date = c.publication_date,
+                guid = c.uuid
             )
         
         return Representation("application/rss+xml", feed.to_xml(), True)
