@@ -68,6 +68,6 @@ class MainPage(webapp2.RequestHandler):
         self.response.out.write("flushed")
 
 app = webapp2.WSGIApplication( [
-    ('/admin/(.*)', MainPage),
-    ('/admin/blob', BlobHandler)
+    ('/admin/blob', BlobHandler),
+    ('/admin/(.*)', MainPage)
 ], debug=True)
