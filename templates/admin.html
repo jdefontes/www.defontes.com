@@ -4,12 +4,17 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Admin </title>
     <link rel="icon" type="image/vnd.microsoft.icon" href="/favicon.ico" />
-
+    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.5.0pr4/build/cssreset/cssreset-min.css">
+    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.5.0pr4/build/cssfonts/cssfonts-min.css">
     <link rel="stylesheet" type="text/css" href="/style/admin.css" />
     <style>
         html, body, #left, #right { height: 100%; margin: 0; padding: 0;}
-        #left { width: 30%; background-color: red; position: absolute;}
+        #left { width: 30%; background-color: red; position: absolute; padding-top: 17px; }
         #right {width: 70%; background-color: orange; position: absolute; right: 0;}
+        #left ul, #left li { margin: 0; padding: 0; list-style: none; }
+        #left ul { margin-left: 17px; }
+        #left li div { line-height: 1.5em; }
+        
     </style>
     <script src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
 </head>
@@ -19,13 +24,21 @@
 </body>
 <script>
 
+    var nameFromPath = function(path) {
+        if (path == "/") return path;
+        var name = path.replace(/\/$/, '');
+        return name.substring(name.lastIndexOf("/")+1);
+    };
+
     var bindChildren = function(parent, resource) {
         var ul = $("<ul>");
         parent.append(ul);
         $.each(resource.child_resources, function() {
             var child = this;
-            var li = $("<li>");
-            var div = $("<div>").text(child.path);
+            var li = $("<li>").css("display", "none");
+            var div = $("<div>");
+            var icon = $("<i>").addClass("icon-" + child.class_name.toLowerCase());
+            div.text(" " + nameFromPath(child.path)).prepend(icon);
             li.append(div);
             if (child.class_name == "Folder") {
                 div.click(function () {
@@ -33,11 +46,12 @@
                     if (subtree.length == 0) {
                         loadFolder(li, child.path);
                     } else {
-                        subtree.toggle();
+                        subtree.slideToggle("fast");
                     }
                 });
             }
             ul.append(li);
+            li.slideDown("fast");
         });
     };
     
@@ -54,7 +68,8 @@
     $(function () {
         $("#left").text("Loading...");
         var ul = $("<ul>");
-        var li = $("<li>").text("/");
+        var icon = $("<i>").addClass("icon-folder");
+        var li = $("<li>").text(" www.defontes.com").prepend(icon);
         ul.append(li);
         loadFolder(li, "/");
         $("#left").empty().append(ul);

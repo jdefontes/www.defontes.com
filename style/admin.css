@@ -116,3 +116,25 @@ textarea {
 .yui-skin-sam #newButton li.tag .yuimenuitemlabel{
     background-image: url(icon_tag.gif);
 }
+
+/* icon sprites */
+[class^="icon-"],
+[class*=" icon-"] {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  line-height: 16px;
+  vertical-align: text-top;
+  background-image: url(icons.png);
+  background-position: 16px 16px;
+  background-repeat: no-repeat;
+}
+.icon-article { background-position: 0 0; }
+.icon-artwork { background-position: -17px 0; }
+.icon-feed { background-position: -34px 0; }
+.icon-image { background-position: -51px 0; }
+.icon-folder { background-position: -68px 0; }
+.icon-tag { background-position: -85px 0; }
+.icon-prev-folder { background-position: -102px 0; }
+
+
